@@ -22,8 +22,10 @@ const Comment = ({...comment}) => {
                 <div className="justify-content-between align-items-center">
                     <div className="justify-content-between align-items-center">
                         <div className="ml-2">
-                                <div className="h5 m-0">{comment.User.name}</div>
+                            <a className="card-link" href={"/account/" + comment.User.id}>
+                                <div className="h5 m-0">@{comment.User.name}</div>
                                 <div className="h7 text-muted"> {comment.User.name} {comment.User.surname}</div>
+                            </a>
                         </div>
                     </div>
                 </div>
@@ -47,9 +49,8 @@ const Comment = ({...comment}) => {
                     className="card-link text-danger"
                     onClick={onClickDeleteComment}
                     >
-                        <span className="supprimer"><ClearIcon /> Supprimer le commentaire </span>
                     </button>
-                )};
+                )}
             </div>
         </div>
     );
