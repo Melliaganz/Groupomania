@@ -4,6 +4,7 @@ const bcrypt = require("bcrypt");
 const cryptoJS = require("crypto-js");
 const functions = require("./functions");
 const models = require("../models");
+const fs = require('fs')
 
 const EMAIL_REGEX = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
@@ -220,7 +221,7 @@ exports.getUserProfile = (req, res, next) => {
   }
 
   models.User.findOne({
-    attributes: ["id", "name", "surname", "email", "createdAt"],
+    attributes: ["id", "name", "surname", "email", "createdAt", "imageUrl"],
     where: { id: CurrentUserId },
   })
     .then((user) => {
@@ -253,12 +254,18 @@ exports.updateUserProfile = (req, res, next) => {
     return res.status(400).json({ error: "Wrong token" });
   }
 
+  
   // Params
   let name = req.body.name;
   let surname = req.body.surname;
-
+  let imageUrl= req.file ? {
+    ...req.body.user,
+    imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
+} : {
+    ...req.body
+};
   models.User.findOne({
-    attributes: ["id", "name", "surname"],
+    attributes: ["id", "name", "surname", "imageUrl"],
     where: { id: CurrentUserId },
   })
     .then((user) => {
@@ -270,6 +277,7 @@ exports.updateUserProfile = (req, res, next) => {
           .update({
             name: name ? name : user.name,
             surname: surname ? surname : user.surname,
+            imageUrl: imageUrl ? imageUrl : user.imageUrl,
           })
           .then((updated) => {
             if (updated) {
@@ -283,7 +291,7 @@ exports.updateUserProfile = (req, res, next) => {
       }
     })
     .catch((error) => {
-      res.status(500).json({ error: "Unable to verify user" });
+      res.status(500).json({ error: error.message });
     });
 };
 

@@ -6,7 +6,7 @@ import {
   getAllUserMessages,
   getMessages,
 } from "../../_utils/messages/messages.functions";
-import { NoMessageFound, NoCommentsFound } from "../Infos/NotFound";
+import { NoMessageFound } from "../Infos/NotFound";
 import FadeIn from "react-fade-in";
 import InfiniteScroll from "react-infinite-scroll-component";
 import PostMessage from "./PostMessage";
@@ -139,6 +139,7 @@ const MessageContainer = ({ ...params }) => {
           <div className="col-12 mb-3  ">
             <Message {...messages} onErase={handleErase} />
           </div>
+          <div><PostComment onClick="reload"/></div>
         </section>
       </React.Fragment>
     );

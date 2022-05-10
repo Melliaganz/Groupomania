@@ -44,11 +44,9 @@ const Comment = ({...comment}) => {
                 </button>
 
                 {comment.canEdit === true && (
-                    <button
-                    href="/"
-                    className="card-link text-danger"
-                    onClick={onClickDeleteComment}
+                    <button className="card-link text-danger" onClick={onClickDeleteComment}
                     >
+                        <ClearIcon /> Supprimer 
                     </button>
                 )}
             </div>

@@ -97,7 +97,8 @@ const App = () => {
         {/* Show the messagesContainer with on messageQuery="getOneMessage" on /messages/:id route*/}
         <Route path="/messages/:id" exact>
         {isLoggedIn ? <MessagesContainer messageQuery="getOneMessage" postComment={true}/>  : <Redirect to="/login" />}
-        <MessagesCommentsContainer commentQuery="getMessageAllComments" PostComment={true}/>
+        <MessagesCommentsContainer commentQuery="getMessageAllComments"/>
+        
         </Route>
       </Switch>
       </main>

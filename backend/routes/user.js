@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const rateLimit = require("express-rate-limit");
 const auth = require("../middleware/auth");
-
+const multer = require("../middleware/multer-config")
 const userCtrl = require("../controllers/user");
 
 // Need to be tested as a middleware
@@ -28,8 +28,8 @@ router.post("/signup", createAccountLimiter, userCtrl.signup);
 router.post("/login", apiLimiter, userCtrl.login);
 router.post("/logout", userCtrl.logout);
 
-router.get("/account/:id", auth, userCtrl.getUserProfile);
-router.put("/account/:id", auth, userCtrl.updateUserProfile);
+router.get("/account/:id", auth, multer, userCtrl.getUserProfile);
+router.put("/account/:id", auth, multer, userCtrl.updateUserProfile);
 router.delete("/account/:id", auth, userCtrl.deleteUserProfile);
 
 module.exports = router;

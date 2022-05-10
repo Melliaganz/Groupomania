@@ -3,6 +3,8 @@ import {logout} from "../../_utils/auth/auth.functions";
 import {getIdFromCookie} from "../../_utils/auth/auth.functions";
 import { useHistory } from "react-router-dom";
 import Dropdown from 'react-bootstrap/Dropdown'
+import PersonIcon from '@mui/icons-material/Person';
+import LogoutIcon from '@mui/icons-material/Logout';
 
 const LoggedHeader = ({ onLogout }) => {
   const idFromCookie = getIdFromCookie();
@@ -25,12 +27,12 @@ const LoggedHeader = ({ onLogout }) => {
         <div>
         <Dropdown>
   <Dropdown.Toggle variant="success" id="dropdown-basic">
-    Compte
+    <PersonIcon /> Compte
   </Dropdown.Toggle>
 
   <Dropdown.Menu>
-    <Dropdown.Item href={"/account/" + idFromCookie}>Mon Compte</Dropdown.Item>
-    <Dropdown.Item href="/login" onClick={onClickLogout} >Se Deconnecter</Dropdown.Item>
+    <Dropdown.Item href={"/account/" + idFromCookie}>  <PersonIcon /> Mon Compte</Dropdown.Item>
+    <Dropdown.Item href="/login" onClick={onClickLogout} > <LogoutIcon />Se Deconnecter</Dropdown.Item>
   </Dropdown.Menu>
 </Dropdown>
         </div>

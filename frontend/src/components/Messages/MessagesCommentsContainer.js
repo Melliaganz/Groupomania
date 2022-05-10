@@ -113,7 +113,6 @@ const MessagesCommentsContainer = ({ ...params}) => {
     ) {
         return (
             <React.Fragment>
-                {params.PostComment ? < PostComment onPost={handlePost} /> : null}
                 <InfiniteScroll
                 dataLength={totalItems}
                 next={() => setPage(+1)}

@@ -1,5 +1,7 @@
 import logo from "../../images/icon.png";
 import Dropdown from 'react-bootstrap/Dropdown'
+import LoginIcon from '@mui/icons-material/Login';
+import SaveAltIcon from '@mui/icons-material/SaveAlt';
 
 const Header = () => {
   return (
@@ -16,8 +18,8 @@ const Header = () => {
   </Dropdown.Toggle>
 
   <Dropdown.Menu>
-    <Dropdown.Item href="/signup">S'enregistrer</Dropdown.Item>
-    <Dropdown.Item href="/login">Se Connecter</Dropdown.Item>
+    <Dropdown.Item href="/signup"> <SaveAltIcon /> S'enregistrer</Dropdown.Item>
+    <Dropdown.Item href="/login"><LoginIcon /> Se Connecter</Dropdown.Item>
   </Dropdown.Menu>
 </Dropdown>
         </div>

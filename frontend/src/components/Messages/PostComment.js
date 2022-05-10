@@ -2,6 +2,7 @@ import React, { useState }from 'react'
 import { toastCommentPosted } from '../../_utils/toasts/comments';
 import "react-toastify/dist/ReactToastify.css"
 import { useParams } from 'react-router-dom';
+import CommentIcon from '@mui/icons-material/Comment';
 
 const PostComment = ({ onPost }) => {
   const { id } = useParams();
@@ -33,7 +34,6 @@ const PostComment = ({ onPost }) => {
       .catch((error) => console.log(error));
 
   }
-  
   return (
     <React.Fragment>
       <section className="row justify-content-lg-center">
@@ -62,7 +62,7 @@ const PostComment = ({ onPost }) => {
             <div className='btn-toolbar justify-content-between'>
               <div className='btn-group'>
                 <button type= "submit" className='btn btn-primary'>
-                  Commentez
+                 <CommentIcon /> Commentez
                 </button>
               </div>
             </div>
