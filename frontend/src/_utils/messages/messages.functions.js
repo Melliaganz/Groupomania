@@ -42,9 +42,19 @@ const deleteOneMessage = (messageId, page) => {
   .then(() => toastMessageDeleted());
 };
 
+const getMessageAllComments = (messageId, page) => {
+  const requestOptions = {
+    method: "GET",
+    headers: { "Content-Type": "application/json" },
+    credentials: "include",
+  };
+  return fetchApi(`http://localhost:3000/api/messages/${messageId}/comments`, page, requestOptions)
+};
+
 export {
   getOneMessage,
   deleteOneMessage,
   getMessages,
   getAllUserMessages,
+  getMessageAllComments,
 };

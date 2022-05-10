@@ -34,7 +34,7 @@ const EditAccount = ({ ...account }) => {
   };
   return (
     <div className="col-11 mb-3">
-      <div className="card">
+      <div className="card bg-transparent">
         <div className="card-header">
           <div className="justify-content-between align-items-center">
             <div className="justify-content-between align-items-center">
@@ -46,11 +46,11 @@ const EditAccount = ({ ...account }) => {
           </div>
         </div>
         <div className="card-body">
-          <h2 className="h5 card-title text-center">Edit Profile</h2>
+          <h2 className="h5 card-title text-center">Modifier le profil</h2>
 
           <form onSubmit={SendData}>
             <div className="form-group">
-              <label htmlFor="nom">nom</label>
+              <label htmlFor="nom">Nom</label>
               <input
                 id="nom"
                 name="nom"

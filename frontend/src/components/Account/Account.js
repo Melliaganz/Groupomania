@@ -1,4 +1,6 @@
 import functions from "../../_utils/_functions";
+import ClearIcon from '@mui/icons-material/Clear';
+import SettingsIcon from '@mui/icons-material/Settings';
 import {
   getEmailFromCrypto,
   deleteAccount,
@@ -29,7 +31,7 @@ const Account = ({ ...account }) => {
   };
   return (
     <div className="col-11 mb-3">
-      <div className="card">
+      <div className="card bg-transparent">
         <div className="card-header">
           <div className="justify-content-between align-items-center">
             <div className="justify-content-between align-items-center">
@@ -58,32 +60,21 @@ const Account = ({ ...account }) => {
           </p>
         </div>
         <div className="card-footer">
-          {/* <a href="#" className="card-link">
-            <i className="fa fa-gittip"></i> Like
-          </a>
-          <a href="#" className="card-link">
-            <i className="fa fa-comment"></i> Comment
-          </a>
-          <a href="#" className="card-link">
-            <i className="fa fa-mail-forward"></i> Share
-          </a> */}
-
           {account.canEdit === true && (
             <a
               href={"/account/" + account.id + "/edit"}
-              className="card-link text-dark"
+              className="card-link text-danger"
             >
-              <i className="fa fa-edit"></i> Edit
+              <span className="supprimer "><SettingsIcon/>Modifier</span> 
             </a>
           )}
           {account.canEdit === true && (
-            // eslint-disable-next-line jsx-a11y/anchor-is-valid
             <a
-              href="#"
+              href="/"
               className="card-link text-danger"
               onClick={onClickDeleteAccount}
             >
-              <i className="fa fa-ban"></i> Erase
+              <span className="supprimer "><ClearIcon/>Supprimer</span> 
             </a>
           )}
         </div>

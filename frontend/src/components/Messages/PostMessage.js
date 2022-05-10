@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { toastMessagePosted } from "../../_utils/toasts/messages";
 import "react-toastify/dist/ReactToastify.css";
 import { REGEX } from "../../_utils/auth/auth.functions";
+import PostAddIcon from '@mui/icons-material/PostAdd';
 
 const PostMessage = ({ onPost }) => {
   const [titleValue, setTitleValue] = useState("");
@@ -37,14 +38,14 @@ const PostMessage = ({ onPost }) => {
   }
 
   return (
-    <section className="row justify-content-center mb-5">
-      <form className="col-11" onSubmit={SendData}>
-        <div className="card">
-          <div className="card-header ">Publish an article</div>
-          <div className="card-body">
+    <section className="row justify-content-center mb-5 ">
+      <form className="col-11 " onSubmit={SendData}>
+        <div className="card bg-transparent">
+          <div className="card-header ">Publiez un article</div>
+          <div className="card-body ">
             <div className="tab-content" id="myTabContent">
               <div className="tab-pane fade show active" id="posts">
-                <div className="form-group">
+                <div className="form-group mb-2">
                   <label className="sr-only" htmlFor="title">
                     title
                   </label>
@@ -54,7 +55,7 @@ const PostMessage = ({ onPost }) => {
                     name="title"
                     type="text"
                     className="form-control"
-                    placeholder="Title?"
+                    placeholder="Titre"
                     value={titleValue}
                     pattern={REGEX.TITLE_REGEX}
                     title="Character a à Z"
@@ -63,14 +64,14 @@ const PostMessage = ({ onPost }) => {
                 </div>
                 <div className="form-group">
                   <label className="sr-only" htmlFor="message">
-                    post
+                    Post
                   </label>
                   <textarea
                     className="form-control"
                     required
                     id="message"
-                    rows="3"
-                    placeholder="Minimum 5 character"
+                    rows="5"
+                    placeholder="Contenu du message (Lettres de A à Z)"
                     value={contentValue}
                     minLength="5"
                     onChange={(event) => setContentValue(event.target.value)}
@@ -80,8 +81,8 @@ const PostMessage = ({ onPost }) => {
             </div>
             <div className="btn-toolbar justify-content-between">
               <div className="btn-group">
-                <button type="submit" className="btn btn-primary">
-                  share
+                <button type="submit" className="btn btn-primary Publier">
+                  <PostAddIcon/>Publier
                 </button>
               </div>
             </div>

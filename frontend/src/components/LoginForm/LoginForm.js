@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
-import logo from "../../images/icon-above-font.png";
+import logo from "../../images/icon-above-font-transparent.webp";
 import {isLogged} from "../../_utils/auth/auth.functions";
 import { userConnected } from "../../_utils/toasts/users";
 
@@ -45,38 +45,40 @@ const LoginForm = ({ onLogin }) => {
 
   return (
     <section className="row mx-auto justify-content-center">
-      <div className="card col-11">
-        <img className="card-img-top mx-auto col-8" src={logo} alt="logo and name of the company Groupomania" />
-        <div className="card-body">
-          <h2 className="h5 card-title text-center">Login</h2>
+      <div className="card bg-transparent col-11">
+        <img className="card-img-top  mx-auto col-8" src={logo} alt="logo and name of the company Groupomania" />
+        <div className="card-body ">
+          <h2 className="h5 card-title  text-center">Se connecter</h2>
           <form onSubmit={sendData}>
-            <div className="form-group">
-              <label htmlFor="email">Email address</label>
+            <div className="form-group ">
+              <label htmlFor="email">Adresse E-mail</label>
               <input
                 name="email"
                 type="email"
                 className="form-control"
                 id="email"
                 placeholder="Enter email"
+                required
                 value={emailValue}
                 onChange={(event) => setEmailValue(event.target.value)}
               />
             </div>
             <div className="form-group">
-              <label htmlFor="password">Password</label>
+              <label htmlFor="password">Mot de passe</label>
               <input
                 name="password"
                 type="password"
                 className="form-control"
                 id="password"
-                placeholder="Password"
+                placeholder="Mot de passe"
+                required
                 value={passwordValue}
                 onChange={(event) => setPasswordValue(event.target.value)}
               />
             </div>
 
-            <button type="submit" className="btn btn-primary mt-3">
-              Login
+            <button type="submit" className="btn btn-primary">
+              Se connecter
             </button>
           </form>
         </div>

@@ -4,7 +4,7 @@ const router = express.Router()
 const auth = require('../middleware/auth')
 const commentCtrl = require('../controllers/comment')
 
-router.post('/messages/:id', auth, commentCtrl.createComment)
-
+router.post('/:id/comment', auth, commentCtrl.createComment)
+router.get('/:id/comments', auth, commentCtrl.getMessageAllComments)
 
 module.exports = router

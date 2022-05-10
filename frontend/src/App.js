@@ -15,8 +15,24 @@ import MessagesContainer from "./components/Messages/MessagesContainer";
 import { ToastContainer} from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import AccountContainer from "./components/Account/AccountContainer";
+import CookieConsent from "react-cookie-consent";
+import useMediaQuery from '@mui/material/useMediaQuery';
+import { createTheme, ThemeProvider } from '@mui/material/styles';
+import CssBaseline from '@mui/material/CssBaseline';
 
 const App = () => {
+  const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)');
+
+  const theme = React.useMemo(
+    () =>
+      createTheme({
+        palette: {
+          mode: prefersDarkMode ? 'dark' : 'light',
+        },
+      }),
+    [prefersDarkMode],
+  );
+
   const [isLoggedIn, setIsLoggedIn] = useState(isLogged())
   
 
@@ -31,14 +47,28 @@ const App = () => {
   return (
     
     <React.Fragment>
+
       {/* Toaster componant */}
       <ToastContainer position="top-center"/>
-      
+      <CookieConsent
+      location="bottom"
+      buttonText="Accepter"
+      cookieName="myAwesomeCookieName2"
+      style={{ background: "#fd2d01" }}
+      buttonStyle={{ background:"black", color: "white", fontSize: "13px" }}
+      expires={150}
+  
+      >
+       Cet application utilise des cookies pour améliorer l'experience utilisateur{" "}
+  
+      </CookieConsent>
       {/* Header componant */}
       {isLoggedIn ? <LoggedHeader onLogout={handleLogout} /> : <Header />}
       <main className="container-fluid">
       <Switch>
 
+      <ThemeProvider theme={theme}>
+      <CssBaseline />
         {/* Show the messagesContainer on / route */}
         <Route path="/" exact>
         {isLoggedIn ? <MessagesContainer messageQuery="getMessages" postMessage={true} />  : <Redirect to="/login" />}
@@ -64,11 +94,12 @@ const App = () => {
 
         {/* Show the messagesContainer with on messageQuery="getOneMessage" on /messages/:id route*/}
         <Route path="/messages/:id" exact>
-        {isLoggedIn ? <MessagesContainer messageQuery="getOneMessage" />  : <Redirect to="/login" />}
+        {isLoggedIn ? <MessagesContainer messageQuery="getOneMessage" postComment={true}/>  : <Redirect to="/login" />}
         </Route>
-
+        </ThemeProvider>
       </Switch>
       </main>
+
     </React.Fragment>
   );
 };

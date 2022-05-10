@@ -1,5 +1,13 @@
+
 .App {
   text-align: center;
+  background-color: var(--text-secondary);
+  color: var(--text-primary);
+  height: 100vh;
+  flex-direction: column;
+  justify-content: center;
+  font-size: .8rem;
+  transition: all .5s; 
 }
 
 .App-logo {
@@ -23,6 +31,9 @@
   font-size: calc(10px + 2vmin);
   color: white;
 }
+.card{
+  border-color: black;
+}
 .card-img-top {
   max-width: 300px;
 }
@@ -32,13 +43,28 @@
 }
 
 .btn-primary {
+  background-color: #fd2d01;
+  margin-top: 15px;
+  border-color: #fd2d01;
+}
+.btn-primary:hover{
   background-color: #ffd7d7;
   border-color: #ffd7d7;
-  margin-top: 15px;
 }
-.btn-primary:hover {
+.btn-primary:active{
+  background-color: #ffd7d7;
+  border-color: #ffd7d7;
+}
+.btn-primary:after{
+  background-color: #ffd7d7;
+  border-color: #ffd7d7;
+}
+.btn-primary:focus{
   background-color: #fd2d01;
   border-color: #fd2d01;
+}
+.btn-secondary{
+  background-color: #ffd7d7;
 }
 .card-link {
   color: #fd2d01;
@@ -48,20 +74,20 @@ a {
   text-decoration: none;
 }
 a:hover{
-  color: initial;
-  font-weight: bolder;
+  color: #ffd7d7;
+  transition: 0.5s;
 }
-a:active {
-  color:red;
-}
+
 .text-teaser {
   max-height: 100px;
 }
 
 .App-link {
-  color: #fd2d01;
+  color: #ffd7d7;
 }
-
+textarea{
+  resize: none;
+}
 @keyframes App-logo-spin {
   from {
     transform: rotate(0deg);
@@ -69,4 +95,52 @@ a:active {
   to {
     transform: rotate(360deg);
   }
+}
+.form-control{
+  background-color: transparent;
+  color: inherit;
+  border-color: #fd2d01;
+}
+.form-control:focus{
+  background-color: transparent;
+  color: inherit;
+}
+.form-control:invalid{
+  background-color: transparent;
+}
+form:invalid button{
+  opacity: 0.3;
+}
+
+form:valid button{
+  transition: 2s;
+}
+#dropdown-basic{
+  background-color: #fd2d01;
+  border-color: #fd2d01;
+}
+#dropdown-basic:hover{
+  opacity: 0.3;
+  transition: 2s;
+  background-color: #fd2d01
+}
+#dropdown-basic:focus{
+  opacity: 0.3;
+}
+.supprimer:hover{
+  opacity: 0.3;
+  transition: 1s;
+}
+.card-link{
+  background-color: initial;
+  border: none;
+}
+.card-link:hover{
+  color: #ffd7d7;
+  transition: 0.5s;
+
+}
+.form-control:disabled, .form-control[readonly]{
+  background-color: black;
+  opacity: 0.3;
 }

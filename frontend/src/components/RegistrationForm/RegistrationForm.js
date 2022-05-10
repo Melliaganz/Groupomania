@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useHistory } from "react-router-dom";
-import logo from "../../images/icon-above-font.png";
+import logo from "../../images/icon-above-font-transparent.webp";
 import { userRegistered } from "../../_utils/toasts/users";
 import {REGEX} from "../../_utils/auth/auth.functions"
 
@@ -41,14 +41,14 @@ const RegistrationForm = () => {
 
   return (
     <section className="row mx-auto justify-content-center">
-      <div className="card col-11">
+      <div className="card col-11 bg-transparent ">
         <img
           className="card-img-top mx-auto col-8"
           src={logo}
           alt="logo of the company Groupomania"
         />
         <div className="card-body">
-          <h1 className="h5 card-title text-center">Register</h1>
+          <h1 className="h5 card-title text-center">S'enregistrer</h1>
 
           <form onSubmit={SendData}>
             <div className="form-group">
@@ -58,7 +58,7 @@ const RegistrationForm = () => {
                 name="nom"
                 type="text"
                 className="form-control"
-                placeholder="Nom"
+                placeholder="Nom ex: Dupont"
                 value={firstnameValue}
                 required
                 pattern={REGEX.NAME_REGEX}
@@ -72,7 +72,7 @@ const RegistrationForm = () => {
                 name="prenom"
                 type="text"
                 className="form-control"
-                placeholder="Prénom"
+                placeholder="Prénom ex: Damien"
                 value={surnameValue}
                 required
                 pattern={REGEX.SURNAME_REGEX}
@@ -87,23 +87,23 @@ const RegistrationForm = () => {
                 type="email"
                 className="form-control"
                 aria-describedby="emailHelp"
-                placeholder="Enter email"
+                placeholder="Email ex: sophie@groupomania.com"
                 value={emailValue}
                 required
                 onChange={(event) => setEmailValue(event.target.value)}
               />
               <small id="emailHelp" className="form-text text-muted">
-                This email can be visible by other users.
+                L'email peut être vu par les autres utilisateurs
               </small>
             </div>
             <div className="form-group">
-              <label htmlFor="password">Password</label>
+              <label htmlFor="password">Mot de passe</label>
               <input
                 id="password"
                 name="password"
                 type="password"
                 className="form-control"
-                placeholder="Password"
+                placeholder="Mot de passe ( doit contenir au moins 1 chiffre)"
                 value={passwordValue}
                 required
                 pattern={REGEX.PASSWORD_REGEX}
@@ -112,7 +112,7 @@ const RegistrationForm = () => {
             </div>
 
             <button type="submit" className="btn btn-primary">
-              Register
+              S'enregistrer
             </button>
           </form>
         </div>

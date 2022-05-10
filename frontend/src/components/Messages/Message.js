@@ -1,8 +1,13 @@
 import globalFunctions from "../../_utils/_functions";
 import { deleteOneMessage } from "../../_utils/messages/messages.functions";
+import ClearIcon from '@mui/icons-material/Clear';
+import React from "react";
+import ThumbUpIcon from '@mui/icons-material/ThumbUp';
+import AddCommentIcon from '@mui/icons-material/AddComment';
+import ShareIcon from '@mui/icons-material/Share';
+import AccessTimeIcon from '@mui/icons-material/AccessTime';
 
 const Message = ({ ...message }) => {
-
   const onClickDeleteMessage = (e) => {
     e.preventDefault();
     if(window.confirm("Are you sure you want to delete this message?")){
@@ -12,9 +17,9 @@ const Message = ({ ...message }) => {
   };
 
   return (
-    <div className="card">
+    <div className="card bg-transparent">
       <div className="card-header">
-        <div className="justify-content-between align-items-center">
+        <div className="justify-content-between align-items-center ">
           <div className="justify-content-between align-items-center">
             <div className="ml-2">
               <a className="card-link" href={"/account/" + message.User.id}>
@@ -26,10 +31,10 @@ const Message = ({ ...message }) => {
           </div>
         </div>
       </div>
-      <div className="card-body">
+      <div className="card-body ">
         <div className="text-muted h7 mb-2">
           {" "}
-          <i className="fa fa-clock-o" />
+          <AccessTimeIcon/>
           {" " + globalFunctions.convertDateForHuman(message.createdAt)}
         </div>
         <a className="card-link" href={"/messages/" + message.id}>
@@ -45,26 +50,24 @@ const Message = ({ ...message }) => {
         )}
       </div>
       <div className="card-footer">
-        {/* <a href="#" className="card-link">
-            <i className="fa fa-gittip"></i> Like
+         <button className="card-link">
+            <ThumbUpIcon/> Like
+          </button>
+          <a href={"/messages/" + message.id} className="card-link">
+          <AddCommentIcon/> Comment
           </a>
-          <a href="#" className="card-link">
-            <i className="fa fa-comment"></i> Comment
-          </a> */}
-        {/*
-          <a href="#" className="card-link">
-            <i className="fa fa-mail-forward"></i> Share
-          </a> */}
+          <button className="card-link">
+            <ShareIcon/> Share
+          </button> 
 
         {message.canEdit === true && (
-          // eslint-disable-next-line jsx-a11y/anchor-is-valid
-          <a
-            href="#"
+          <button
+            href="/"
             className="card-link text-danger"
             onClick={onClickDeleteMessage}
           >
-            <i className="fa fa-ban"></i> Erase
-          </a>
+            <span className="supprimer"><ClearIcon /> Supprimer </span>
+          </button>
         )}
       </div>
     </div>

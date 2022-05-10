@@ -10,6 +10,7 @@ import { NoMessageFound } from "../Infos/NotFound";
 import FadeIn from "react-fade-in";
 import InfiniteScroll from "react-infinite-scroll-component";
 import PostMessage from "./PostMessage";
+import CommentsContainer from "./CommentsContainer";
 
 const MessageContainer = ({ ...params }) => {
   const [error, setError] = useState(null);
@@ -134,10 +135,11 @@ const MessageContainer = ({ ...params }) => {
   } else if (messages && params.messageQuery === "getOneMessage") {
     return (
       <React.Fragment>
-        <section className="row justify-content-center">
-          <div className="col-12 mb-3">
+        <section className="row justify-content-center  ">
+          <div className="col-12 mb-3  ">
             <Message {...messages} onErase={handleErase} />
           </div>
+          <div><CommentsContainer /></div>
         </section>
       </React.Fragment>
     );
@@ -155,10 +157,10 @@ const MessageContainer = ({ ...params }) => {
           next={() => setPage(+1)}
           hasMore={true}
         >
-          <section className="row justify-content-center">
+          <section className="row justify-content-center ">
             {messages.map((message) => (
               <React.Fragment key={message.id}>
-                <FadeIn className="col-11 mb-3" transitionDuration={2000}>
+                <FadeIn className="col-5 mb-3" transitionDuration={2000}>
                   <Message {...message} teaserMessage={true} />
                 </FadeIn>
               </React.Fragment>

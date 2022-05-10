@@ -91,7 +91,7 @@ const AccountMessagesContainer = ({ ...params }) => {
   } else {
     return (
       <React.Fragment>
-        <div className="text-center">No messages</div>
+        <div className="text-center">Aucun message</div>
       </React.Fragment>
     );
   }

@@ -14,4 +14,10 @@ export  const NoUserFound = () => {
     </div>
   );
 };
-
+export const NoCommentsFound = () => {
+  return (
+    <div >
+      <p className="text-center"> Aucun commentaires</p>
+    </div>
+  )
+}
