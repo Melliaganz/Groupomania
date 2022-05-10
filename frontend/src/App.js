@@ -19,6 +19,7 @@ import CookieConsent from "react-cookie-consent";
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
+import MessagesCommentsContainer from "./components/Messages/MessagesCommentsContainer";
 
 const App = () => {
   const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)');
@@ -50,6 +51,8 @@ const App = () => {
 
       {/* Toaster componant */}
       <ToastContainer position="top-center"/>
+      <ThemeProvider theme={theme}>
+      <CssBaseline />
       <CookieConsent
       location="bottom"
       buttonText="Accepter"
@@ -67,8 +70,7 @@ const App = () => {
       <main className="container-fluid">
       <Switch>
 
-      <ThemeProvider theme={theme}>
-      <CssBaseline />
+
         {/* Show the messagesContainer on / route */}
         <Route path="/" exact>
         {isLoggedIn ? <MessagesContainer messageQuery="getMessages" postMessage={true} />  : <Redirect to="/login" />}
@@ -95,11 +97,11 @@ const App = () => {
         {/* Show the messagesContainer with on messageQuery="getOneMessage" on /messages/:id route*/}
         <Route path="/messages/:id" exact>
         {isLoggedIn ? <MessagesContainer messageQuery="getOneMessage" postComment={true}/>  : <Redirect to="/login" />}
+        <MessagesCommentsContainer commentQuery="getMessageAllComments" PostComment={true}/>
         </Route>
-        </ThemeProvider>
       </Switch>
       </main>
-
+      </ThemeProvider>
     </React.Fragment>
   );
 };

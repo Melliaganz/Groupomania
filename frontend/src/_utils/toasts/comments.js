@@ -1,5 +1,5 @@
 import { toast } from 'react-toastify';
 
-const toastCommentPosted = () => toast.success("Commentaire publié !")
+const toastCommentPosted = () => toast.success("Commentaire Publié !")
 
 export { toastCommentPosted }

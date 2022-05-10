@@ -10,7 +10,7 @@ import AccessTimeIcon from '@mui/icons-material/AccessTime';
 const Message = ({ ...message }) => {
   const onClickDeleteMessage = (e) => {
     e.preventDefault();
-    if(window.confirm("Are you sure you want to delete this message?")){
+    if(window.confirm("Voulez vous vraiment supprimer ce message ?")){
       deleteOneMessage(message.id) 
       message.onErase() 
     }

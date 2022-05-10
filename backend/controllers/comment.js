@@ -33,20 +33,47 @@ exports.createComment = (req, res) => {
             if (newComment) {
               return res.status(201).json({ Message: "Message posted !" });
             } else {
-              return res.status(500).json({  error: error.message });
+              return res.status(500).json({  error: "error.message" });
             }
           })
           .catch((error) => {
-            return res.status(500).json({  error: error.message });
+            return res.status(500).json({  error: "error.message" });
           });
       } else {
-        return res.status(404).json({  error: error.message });
+        return res.status(404).json({  error: "error.message" });
       }
     })
     .catch((error) => {
-      return res.status(500).json({ error: error.message });
+      return res.status(500).json({ error: "error.message" });
     });
 };
+exports.deleteComments = (req, res) => {
+  let userInfos = functions.getInfosUserFromToken(req, res);
+  let commentId = req.params.id;
+  console.log(commentId);
+
+  models.Comment.findOne({
+    where: { id: commentId},
+  })
+  .then((comment) => {
+    if (
+      (comment && comment.UserId === userInfos.userId) ||
+      userInfos.admin === true
+    ) {
+      models.Comment.destroy({
+        where: { id: commentId},
+      })
+      .then(() => {
+        res.status(200).json({ message: "Objet Supprimé !"});
+      })
+      .catch((error) => {res.status(400).json({ error })});
+    }
+  })
+  .catch((error) => {
+    return res.status(404).json({ error: error.message})
+  })
+}
+
 
 exports.getMessageAllComments = (req, res) => {
   let userInfos = functions.getInfosUserFromToken(req, res);
@@ -101,7 +128,31 @@ exports.getMessageAllComments = (req, res) => {
     } else if (response.totalItems > 0) {
       res.send(response);
     } else {
-      res.status(404).json({ error: error.message })
+      res.status(404).json({ error: "error.message" })
     }
   })
 }
+exports.getOneComment= (req, res) => {
+  let userInfos = functions.getInfosUserFromToken(req, res);
+  let commentId = req.params.id;
+
+  models.Comment.findOne({
+    where: {id: commentId},
+  })
+  .then((comments) => {
+    if (
+      (comments && comments.UserId === userInfos.userId) ||
+      userInfos.admin === true 
+    ) {
+      comments.dataValues.canEdit = true;
+      res.status(200).json(comments);
+    } else if (comments) {
+      res.status(200).json(comments);
+    } else {
+      res.status(404).send({ error: "Comment Not Found "});
+    }
+  })
+  .catch((error) => {
+    return res.status(404).json({ error: "error.message"});
+  });
+};

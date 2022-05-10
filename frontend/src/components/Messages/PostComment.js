@@ -1,5 +1,5 @@
 import React, { useState }from 'react'
-import { toastMessagePosted } from '../../_utils/toasts/messages';
+import { toastCommentPosted } from '../../_utils/toasts/comments';
 import "react-toastify/dist/ReactToastify.css"
 import { useParams } from 'react-router-dom';
 
@@ -26,7 +26,7 @@ const PostComment = ({ onPost }) => {
         } else {
           onPost();
           setTextValue("");
-          toastMessagePosted();
+          toastCommentPosted();
         }
       })
 

@@ -6,11 +6,11 @@ import {
   getAllUserMessages,
   getMessages,
 } from "../../_utils/messages/messages.functions";
-import { NoMessageFound } from "../Infos/NotFound";
+import { NoMessageFound, NoCommentsFound } from "../Infos/NotFound";
 import FadeIn from "react-fade-in";
 import InfiniteScroll from "react-infinite-scroll-component";
 import PostMessage from "./PostMessage";
-import CommentsContainer from "./CommentsContainer";
+import PostComment from "./PostComment";
 
 const MessageContainer = ({ ...params }) => {
   const [error, setError] = useState(null);
@@ -139,7 +139,6 @@ const MessageContainer = ({ ...params }) => {
           <div className="col-12 mb-3  ">
             <Message {...messages} onErase={handleErase} />
           </div>
-          <div><CommentsContainer /></div>
         </section>
       </React.Fragment>
     );
@@ -160,7 +159,7 @@ const MessageContainer = ({ ...params }) => {
           <section className="row justify-content-center ">
             {messages.map((message) => (
               <React.Fragment key={message.id}>
-                <FadeIn className="col-5 mb-3" transitionDuration={2000}>
+                <FadeIn className="col-11 mb-3" transitionDuration={2000}>
                   <Message {...message} teaserMessage={true} />
                 </FadeIn>
               </React.Fragment>
@@ -173,7 +172,7 @@ const MessageContainer = ({ ...params }) => {
     return (
       <React.Fragment>
         {params.postMessage ? <PostMessage onPost={handlePost} /> : null}
-        <div className="text-center">No messages</div>
+        <div className="text-center">Aucun messages</div>
       </React.Fragment>
     );
   }
