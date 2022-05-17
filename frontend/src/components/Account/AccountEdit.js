@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useParams } from "react-router-dom";
 import { getEmailFromCrypto, REGEX } from "../../_utils/auth/auth.functions";
 import { userModified } from "../../_utils/toasts/users";
+import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
 
 const EditAccount = ({ ...account }) => {
   const { id } = useParams();
@@ -10,16 +11,25 @@ const EditAccount = ({ ...account }) => {
   );
   const [firstnameValue, setFirstnameValue] = useState(account.name);
   const [surnameValue, setSurnameValue] = useState(account.surname);
+  const [imageUrlValue, setImageUrlValue] = useState (account.imageUrl);
+  const [imageUrl, setimageUrl] = useState(false);
+
+  const handleChange = (e) => {
+    setImageUrlValue(URL.createObjectURL(e.target.files[0]))
+    setimageUrl(e.target.files[0])
+    
+  };
 
   const SendData = (e) => {
     e.preventDefault();
     const requestOptions = {
       method: "PUT",
-      headers: { "Content-Type": "application/json" },
+      headers: { "Content-Type": "multipart/form-data; boundary=something" }, 
       credentials: "include",
       body: JSON.stringify({
         name: firstnameValue,
         surname: surnameValue,
+        image: imageUrl
       }),
     };
     fetch(`http://localhost:3000/api/auth/account/${id}`, requestOptions)
@@ -39,7 +49,8 @@ const EditAccount = ({ ...account }) => {
           <div className="justify-content-between align-items-center">
             <div className="justify-content-between align-items-center">
               <div className="ml-2">
-                <div className="h5 m-0">@{account.name}</div>
+                <img src={account.imageUrl} alt="" className="profilePic"/>
+                <div className="h5 m-0">@{account.name }</div>
                 <div className="h7 text-muted">{account.name} {account.surname}</div>
               </div>
             </div>
@@ -91,6 +102,21 @@ const EditAccount = ({ ...account }) => {
                 onChange={(event) => setEmailValue(event.target.value)}
               />
             </div>
+            <div className="form-group">
+              <label htmlFor="inputButton"></label>
+              <input
+              accept="image/*"
+              className="mt-4"
+              id="select-image"
+              name="file"
+              type="file"
+              onChange={e => handleChange(e)}
+              multiple={false}
+              />
+              <p>
+                <img src={imageUrlValue} alt="" className="Preview" />
+              </p>
+            </div>
             {/* <div className="form-group">
               <label htmlFor="password">Password</label>
               <input
@@ -105,9 +131,8 @@ const EditAccount = ({ ...account }) => {
                 onChange={(event) => setPasswordValue(event.target.value)}
               />
             </div> */}
-
             <button type="submit" className="btn btn-primary">
-              Edit
+              <ManageAccountsIcon /> Modifier 
             </button>
           </form>
         </div>

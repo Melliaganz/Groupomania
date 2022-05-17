@@ -87,7 +87,7 @@ exports.getAllMessages = (req, res) => {
     include: [
       {
         model: models.User,
-        attributes: ["name", "surname", "id"],
+        attributes: ["name", "surname", "id", "imageUrl"],
       },
     ],
   })
@@ -142,7 +142,7 @@ exports.getUserAllMessages = (req, res) => {
     include: [
       {
         model: models.User,
-        attributes: ["name", "surname", "id"],
+        attributes: ["name", "surname", "id","imageUrl"],
       },
     ],
   }).then((data) => {
@@ -174,7 +174,7 @@ exports.getOneMessage = (req, res) => {
     include: [
       {
         model: models.User,
-        attributes: ["name", "surname", "id"],
+        attributes: ["name", "surname", "id", "imageUrl"],
       },
     ],
   })

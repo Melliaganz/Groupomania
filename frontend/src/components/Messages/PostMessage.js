@@ -41,7 +41,7 @@ const PostMessage = ({ onPost }) => {
     <section className="row justify-content-center mb-5 ">
       <form className="col-11 " onSubmit={SendData}>
         <div className="card bg-transparent">
-          <div className="card-header ">Publiez un article</div>
+          <div className="card-header "> <PostAddIcon /> Publiez un article</div>
           <div className="card-body ">
             <div className="tab-content" id="myTabContent">
               <div className="tab-pane fade show active" id="posts">

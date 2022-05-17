@@ -3,8 +3,11 @@ import {logout} from "../../_utils/auth/auth.functions";
 import {getIdFromCookie} from "../../_utils/auth/auth.functions";
 import { useHistory } from "react-router-dom";
 import Dropdown from 'react-bootstrap/Dropdown'
+import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
+import MenuIcon from '@mui/icons-material/Menu';
 import PersonIcon from '@mui/icons-material/Person';
 import LogoutIcon from '@mui/icons-material/Logout';
+import ChatIcon from '@mui/icons-material/Chat';
 
 const LoggedHeader = ({ onLogout }) => {
   const idFromCookie = getIdFromCookie();
@@ -27,11 +30,13 @@ const LoggedHeader = ({ onLogout }) => {
         <div>
         <Dropdown>
   <Dropdown.Toggle variant="success" id="dropdown-basic">
-    <PersonIcon /> Compte
+    <MenuIcon /> Menu
   </Dropdown.Toggle>
 
   <Dropdown.Menu>
+  <Dropdown.Item href= "/" > <ChatIcon /> Fil d'actualité</Dropdown.Item>
     <Dropdown.Item href={"/account/" + idFromCookie}>  <PersonIcon /> Mon Compte</Dropdown.Item>
+    <Dropdown.Item href={"/account/" + idFromCookie + "/edit/"} > <ManageAccountsIcon /> Modifier Profil  </Dropdown.Item>
     <Dropdown.Item href="/login" onClick={onClickLogout} > <LogoutIcon />Se Deconnecter</Dropdown.Item>
   </Dropdown.Menu>
 </Dropdown>

@@ -141,6 +141,24 @@ form:valid button{
 
 }
 .form-control:disabled, .form-control[readonly]{
-  background-color: black;
-  opacity: 0.3;
+  background-color: initial;
+  opacity: 0.5;
+}
+.profilePic {
+  max-width: 50px;
+  margin-left: -5px;
+  border-radius: 50%;
+}
+.profileNavbar{
+  max-width: 25px;
+  border-radius: 50%;
+  margin-left: -5px
+}
+.imageUrlValue{
+  background-color: transparent;
+  max-width: 150px;
+}
+.Preview {
+  max-width: 150px;
+  border-radius: 50%;
 }

@@ -28,9 +28,10 @@ const PostComment = ({ onPost }) => {
           onPost();
           setTextValue("");
           toastCommentPosted();
+          window.location.reload();
         }
+        
       })
-
       .catch((error) => console.log(error));
 
   }

@@ -3,6 +3,7 @@ import { useHistory } from "react-router-dom";
 import logo from "../../images/icon-above-font-transparent.webp";
 import { userRegistered } from "../../_utils/toasts/users";
 import {REGEX} from "../../_utils/auth/auth.functions"
+import SaveAltIcon from '@mui/icons-material/SaveAlt';
 
 const RegistrationForm = () => {
   const [emailValue, setEmailValue] = useState("");
@@ -112,7 +113,7 @@ const RegistrationForm = () => {
             </div>
 
             <button type="submit" className="btn btn-primary">
-              S'enregistrer
+             <SaveAltIcon /> S'enregistrer
             </button>
           </form>
         </div>

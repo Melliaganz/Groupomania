@@ -72,7 +72,7 @@ const MessagesCommentsContainer = ({ ...params}) => {
         //eslint-disable-next-line react-hooks/exhaustive-deps
     }, [page, refetch]);
 
-    const handlePost = () => {
+    const handleCommentPost = () => {
         setRefetch(( refetch ) => refetch + 1);
         setPage((page) => {
             page = 0;
@@ -121,7 +121,7 @@ const MessagesCommentsContainer = ({ ...params}) => {
                     <section className="row justify-content-center">
                         {comments.map((comment) => (
                             <React.Fragment key= {comment.id}>
-                                <FadeIn className="coll-11 mb-3" transitionDuration={2000}>
+                                <FadeIn className="coll-11 mt-2" transitionDuration={2000}>
                                     <Comment {...comment} teaserComment={true} />
                                 </FadeIn>
                             </React.Fragment>
@@ -133,7 +133,7 @@ const MessagesCommentsContainer = ({ ...params}) => {
     } else {
         return (
             <React.Fragment>
-                {params.postComment ? <PostComment onPost={handlePost} /> : null}
+                {params.postComment ? <PostComment onPost={handleCommentPost} /> : null}
                 <div className="text-center">Aucun Commentaire</div>
             </React.Fragment>
         );

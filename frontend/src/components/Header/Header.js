@@ -2,6 +2,7 @@ import logo from "../../images/icon.png";
 import Dropdown from 'react-bootstrap/Dropdown'
 import LoginIcon from '@mui/icons-material/Login';
 import SaveAltIcon from '@mui/icons-material/SaveAlt';
+import MenuIcon from '@mui/icons-material/Menu';
 
 const Header = () => {
   return (
@@ -14,7 +15,7 @@ const Header = () => {
         <div>
         <Dropdown>
   <Dropdown.Toggle variant="success" id="dropdown-basic">
-    Connexion
+    <MenuIcon /> Connexion
   </Dropdown.Toggle>
 
   <Dropdown.Menu>

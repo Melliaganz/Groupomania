@@ -23,6 +23,7 @@ const Message = ({ ...message }) => {
           <div className="justify-content-between align-items-center">
             <div className="ml-2">
               <a className="card-link" href={"/account/" + message.User.id}>
+              <img src={message.User.imageUrl} className="profilePic" alt="" /> 
                 <div className="h5 m-0">@{message.User.name}</div>
                 <div className="h7 text-muted">{message.User.name} {message.User.surname}</div>
 

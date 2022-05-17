@@ -3,6 +3,7 @@ import { useHistory } from "react-router-dom";
 import logo from "../../images/icon-above-font-transparent.webp";
 import {isLogged} from "../../_utils/auth/auth.functions";
 import { userConnected } from "../../_utils/toasts/users";
+import LoginIcon from '@mui/icons-material/Login';
 
 const LoginForm = ({ onLogin }) => {
   const [emailValue, setEmailValue] = useState("");
@@ -78,7 +79,7 @@ const LoginForm = ({ onLogin }) => {
             </div>
 
             <button type="submit" className="btn btn-primary">
-              Se connecter
+             <LoginIcon /> Se connecter
             </button>
           </form>
         </div>

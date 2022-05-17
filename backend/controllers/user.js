@@ -25,6 +25,7 @@ exports.signup = (req, res, next) => {
   let name = req.body.name;
   let surname = req.body.surname;
   let password = req.body.password;
+  let imageUrl = "http://localhost:3000/images/img_24787.png";
 
   // Hash the email the have a unique validation
   let emailHash = cryptoJS.MD5(req.body.email).toString();
@@ -81,6 +82,7 @@ exports.signup = (req, res, next) => {
               email: emailEncrypted,
               emailHash: emailHash,
               password: hash,
+              imageUrl: imageUrl,
               admin: 0,
             });
             newUser
@@ -247,8 +249,8 @@ exports.getUserProfile = (req, res, next) => {
 
 exports.updateUserProfile = (req, res, next) => {
   // Getting auth header
-  let userInfos = functions.getInfosUserFromToken(req, res);
-  let CurrentUserId = req.params.id;
+  const userInfos = functions.getInfosUserFromToken(req, res);
+  const CurrentUserId = req.params.id;
 
   if (userInfos.userId < 0) {
     return res.status(400).json({ error: "Wrong token" });
@@ -258,12 +260,10 @@ exports.updateUserProfile = (req, res, next) => {
   // Params
   let name = req.body.name;
   let surname = req.body.surname;
-  let imageUrl= req.file ? {
-    ...req.body.user,
-    imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
-} : {
-    ...req.body
-};
+  let imageUrl = req.body && req.file ? `${req.protocol}://${req.get('host')}/images/${req.file.filename}` : null;
+
+
+
   models.User.findOne({
     attributes: ["id", "name", "surname", "imageUrl"],
     where: { id: CurrentUserId },
@@ -272,12 +272,12 @@ exports.updateUserProfile = (req, res, next) => {
       if (!user) {
         res.status(404).json({ error: "User not found" });
       }
-      if ((user && user.id === userInfos.userId) || userInfos.admin === true) {
+      if ((user && user.id === userInfos.userId) || userInfos.admin === true)  {
         user
           .update({
-            name: name ? name : user.name,
-            surname: surname ? surname : user.surname,
-            imageUrl: imageUrl ? imageUrl : user.imageUrl,
+            name: (name ? name : user.name),
+            surname: (surname ? surname : user.surname),
+            imageUrl: (imageUrl ? imageUrl : user.imageUrl),
           })
           .then((updated) => {
             if (updated) {
@@ -291,14 +291,14 @@ exports.updateUserProfile = (req, res, next) => {
       }
     })
     .catch((error) => {
-      res.status(500).json({ error: error.message });
+      res.status(500).json({ error: "Erreur" });
     });
 };
 
 exports.deleteUserProfile = (req, res) => {
   let userInfos = functions.getInfosUserFromToken(req, res);
   let CurrentUserId = req.params.id;
-
+  
   if (userInfos.userId < 0) {
     return res.status(400).json({ error: "Wrong token" });
   }

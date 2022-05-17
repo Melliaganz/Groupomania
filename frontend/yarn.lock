@@ -9664,6 +9664,11 @@ react-fade-in@^1.1.1:
   resolved "https://registry.yarnpkg.com/react-fade-in/-/react-fade-in-1.1.1.tgz#826570835bf2bc5362390df49d98a795f3d1e9fb"
   integrity sha512-HQjLCQbpPg7sR1INtArpKfTvB6U7197nG9JvmsCExkZnjvAgOdJY2gW4x0ggu5uH2WRNOgfB4TS0ATe2fwnoEg==
 
+react-images-uploading@^3.1.6:
+  version "3.1.6"
+  resolved "https://registry.yarnpkg.com/react-images-uploading/-/react-images-uploading-3.1.6.tgz#0e8c6b5f651f13bf456e194e69f401cf285d5125"
+  integrity sha512-CHaTZh2CN7Plip11D02muxcRGnFXfqsJ1c+2hoUcVbbHQLjTOafkX3iIo0aipu6r+c4EFRwikycOCnOw3NeiPw==
+
 react-infinite-scroll-component@^5.1.0:
   version "5.1.0"
   resolved "https://registry.yarnpkg.com/react-infinite-scroll-component/-/react-infinite-scroll-component-5.1.0.tgz#3c0043cd17c6857c25d3ca7aa4171e0c33ce8023"

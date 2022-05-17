@@ -70,7 +70,7 @@ exports.deleteComments = (req, res) => {
     }
   })
   .catch((error) => {
-    return res.status(404).json({ error: error.message})
+    return res.status(404).json({ error: error.messsage})
   })
 }
 
@@ -110,7 +110,7 @@ exports.getMessageAllComments = (req, res) => {
     include: [
       {
         model: models.User,
-        attributes: ["name", "surname", "id"],
+        attributes: ["name", "surname", "id", "imageUrl"],
       },
     ],
   }).then((data) => {
@@ -128,7 +128,7 @@ exports.getMessageAllComments = (req, res) => {
     } else if (response.totalItems > 0) {
       res.send(response);
     } else {
-      res.status(404).json({ error: "error.message" })
+      res.status(404).json({ error: "error.messsssage" })
     }
   })
 }
@@ -153,6 +153,6 @@ exports.getOneComment= (req, res) => {
     }
   })
   .catch((error) => {
-    return res.status(404).json({ error: "error.message"});
+    return res.status(404).json({ error: "error.messssssage"});
   });
 };

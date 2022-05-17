@@ -23,7 +23,8 @@ const Comment = ({...comment}) => {
                     <div className="justify-content-between align-items-center">
                         <div className="ml-2">
                             <a className="card-link" href={"/account/" + comment.User.id}>
-                                <div className="h5 m-0">@{comment.User.name}</div>
+                            <img src={comment.User.imageUrl} alt="" className="profilePic" />
+                                <div className="h5 m-0"> @{comment.User.name}</div>
                                 <div className="h7 text-muted"> {comment.User.name} {comment.User.surname}</div>
                             </a>
                         </div>

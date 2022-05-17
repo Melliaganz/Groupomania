@@ -20,6 +20,7 @@ const MessageContainer = ({ ...params }) => {
   const [page, setPage] = useState(0);
   const [totalItems, setTotalItems] = useState(0);
   const [refetch, setRefetch] = useState(0);
+  const [comments, setComments] = useState([]);
 
   const fetchMessage = () => {
     if (params.messageQuery === "getMessages") {
@@ -112,6 +113,13 @@ const MessageContainer = ({ ...params }) => {
     setMessages(messages.splice(0, messages.length));
     
   };
+  const handleCommentPost = () => {
+    setRefetch((refetch) => refetch + 1);
+    setPage((page) => {
+      page= 0;
+    });
+    setComments(comments.splice(0, comments.length));
+  }
 
   const handleErase = () => {
     setRefetch((refetch) => refetch + 1);
@@ -139,7 +147,7 @@ const MessageContainer = ({ ...params }) => {
           <div className="col-12 mb-3  ">
             <Message {...messages} onErase={handleErase} />
           </div>
-          <div><PostComment onClick="reload"/></div>
+          <div><PostComment onPost={handleCommentPost}/></div>
         </section>
       </React.Fragment>
     );
@@ -173,7 +181,7 @@ const MessageContainer = ({ ...params }) => {
     return (
       <React.Fragment>
         {params.postMessage ? <PostMessage onPost={handlePost} /> : null}
-        <div className="text-center">Aucun messages</div>
+        <div className="text-center"><NoMessageFound /></div>
       </React.Fragment>
     );
   }
