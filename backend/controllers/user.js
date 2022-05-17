@@ -25,7 +25,7 @@ exports.signup = (req, res, next) => {
   let name = req.body.name;
   let surname = req.body.surname;
   let password = req.body.password;
-  let imageUrl = "http://localhost:3000/images/img_24787.png";
+  let imageUrl = "https://pic.onlinewebfonts.com/svg/img_24787.png";
 
   // Hash the email the have a unique validation
   let emailHash = cryptoJS.MD5(req.body.email).toString();
@@ -272,6 +272,16 @@ exports.updateUserProfile = (req, res, next) => {
       if (!user) {
         res.status(404).json({ error: "User not found" });
       }
+      if (user.imageUrl != null) {
+        const filename = user.imageUrl.split("/images/")[1];
+        fs.unlink(`images/${filename}`, (err) => {
+          if (err) {
+            console.log("impossible de supprimer l'image " + err);
+          } else {
+            console.log("image supprimée")
+          }
+        })
+      }
       if ((user && user.id === userInfos.userId) || userInfos.admin === true)  {
         user
           .update({
@@ -305,21 +315,30 @@ exports.deleteUserProfile = (req, res) => {
 
   models.User.findOne({
     where: { id: CurrentUserId },
-    attributes: ["id", "name", "surname", "email", "createdAt"],
+    attributes: ["id", "name", "surname", "email", "createdAt", "imageUrl"],
   })
+  
     .then((user) => {
       console.log(user.id);
       console.log(userInfos.userId);
       console.log(userInfos.admin);
       
-
       if ((user && user.id === userInfos.userId) || userInfos.admin === true) {
         async function destroyUser(userId) {
           await models.User.destroy({
             where: { id: userId },
           });
+          
         }
+        if (user.imageUrl != null) {
+          const filename = user.imageUrl.split("/images/")[1];
+          fs.unlink(`./images/${filename}`, (err) => {
+            console.log(err);
+          })
+        }
+        
         destroyUser(user.id)
+        
           .then(() => {
             console.log("User supprimé");
             res.status(200).json({ message: "User supprimé !" });

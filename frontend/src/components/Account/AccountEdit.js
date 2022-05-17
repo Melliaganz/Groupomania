@@ -12,29 +12,31 @@ const EditAccount = ({ ...account }) => {
   const [firstnameValue, setFirstnameValue] = useState(account.name);
   const [surnameValue, setSurnameValue] = useState(account.surname);
   const [imageUrlValue, setImageUrlValue] = useState (account.imageUrl);
-  const [imageUrl, setimageUrl] = useState(false);
+  const [files, setFiles] = useState(false);
 
   const handleChange = (e) => {
     setImageUrlValue(URL.createObjectURL(e.target.files[0]))
-    setimageUrl(e.target.files[0])
+    setFiles(e.target.files[0])
     
   };
 
   const SendData = (e) => {
     e.preventDefault();
+    const data = new FormData();
+    data.append("image", files);
+    data.append("name", firstnameValue)
+    data.append("surname", surnameValue);
     const requestOptions = {
       method: "PUT",
-      headers: { "Content-Type": "application/json" }, 
+      accept: "*/*",
+      headers: { "encType": "application/x-www-form-urlencoded" }, 
       credentials: "include",
-      body: JSON.stringify({
-        name: firstnameValue,
-        surname: surnameValue,
-        imageUrl: imageUrl,
-      }),
+      body: data,
     };
+    console.log(data);
     fetch(`http://localhost:3000/api/auth/account/${id}`, requestOptions)
       .then((response) => {
-        console.log(response.json());
+        console.log(data);
         if (response.ok) {
           userModified();
           account.onPost();
@@ -59,7 +61,7 @@ const EditAccount = ({ ...account }) => {
         <div className="card-body">
           <h2 className="h5 card-title text-center">Modifier le profil</h2>
 
-          <form onSubmit={SendData}>
+          <form onSubmit={SendData} encType="application/x-www-form-urlencoded">
             <div className="form-group">
               <label htmlFor="nom">Nom</label>
               <input
@@ -108,7 +110,7 @@ const EditAccount = ({ ...account }) => {
               accept="image/*"
               className="mt-4"
               id="select-image"
-              name="file"
+              name="image"
               type="file"
               onChange={e => handleChange(e)}
               multiple={false}
