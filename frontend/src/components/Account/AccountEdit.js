@@ -24,12 +24,12 @@ const EditAccount = ({ ...account }) => {
     e.preventDefault();
     const requestOptions = {
       method: "PUT",
-      headers: { "Content-Type": "multipart/form-data; boundary=something" }, 
+      headers: { "Content-Type": "application/json" }, 
       credentials: "include",
       body: JSON.stringify({
         name: firstnameValue,
         surname: surnameValue,
-        image: imageUrl
+        imageUrl: imageUrl,
       }),
     };
     fetch(`http://localhost:3000/api/auth/account/${id}`, requestOptions)
