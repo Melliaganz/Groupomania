@@ -52,7 +52,7 @@ const PostComment = ({ onPost }) => {
                   name="commentaire"
                   type="text"
                   className='form-control'
-                  placeholder="Commentez !"
+                  placeholder="Commenter !"
                   minLength="2"
                   value={textValue}
                   onChange={(event) => setTextValue(event.target.value)}
@@ -63,7 +63,7 @@ const PostComment = ({ onPost }) => {
             <div className='btn-toolbar justify-content-between'>
               <div className='btn-group'>
                 <button type= "submit" className='btn btn-primary'>
-                 <CommentIcon /> Commentez
+                 <CommentIcon /> Commenter
                 </button>
               </div>
             </div>

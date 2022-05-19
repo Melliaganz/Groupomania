@@ -62,7 +62,7 @@ const App = () => {
       expires={150}
   
       >
-       Cet application utilise des cookies pour améliorer l'experience utilisateur{" "}
+       Cette application utilise des cookies pour améliorer l'experience utilisateur{" "}
   
       </CookieConsent>
       {/* Header componant */}
