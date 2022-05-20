@@ -2,7 +2,7 @@
 ## Projet N° 7 d'OpenClassrooms ##
 
 ### Créez un réseau social d’entreprise ###
-
+[Install Front](frontend/README.MD)         [Install Back](backend/README.MD)
 #### Scenario ####
 
 Vous êtes développeur depuis plus d'un an chez CONNECT-E, une petite agence web regroupant une douzaine d'employés.
@@ -19,6 +19,3 @@ Le client en question est Groupomania, un groupe spécialisé dans la grande dis
 
 ![screenshot](GroupomaniaLogin.png)
 ![screenshot](GroupomaniaFeed.png)
-
-[Install Front](frontend/README.MD)
-[Install Back](backend/README.MD)
