@@ -5,4 +5,5 @@
 ![screenshot](GroupomaniaLogin.png)
 ![screenshot](GroupomaniaFeed.png)
 
-[InstallFront](Front/README.MD)
+[InstallFront](frontned/README.MD)
+[InstallBack](backend/README.MD)
