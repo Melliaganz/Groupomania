@@ -12,12 +12,10 @@ Votre directrice, Stéphanie, invite toute l'agence à prendre un verre pour cé
 Le client en question est Groupomania, un groupe spécialisé dans la grande distribution et l'un des plus fidèles clients de l'agence.
 
 ##### Compétences évaluées #####
-
- 1.Créez un réseau social d'entreprise !
-    - Authentifier un utilisateur et maintenir sa session
-        - Gérer un stockage de données a l'aide de `SQL`
-            -Implémenter un stockage de données sécurisé en utilisant SQL
-                - Personnaliser le contenu envoyé à un client web.
+ - Authentifier un utilisateur et maintenir sa session
+ - Gérer un stockage de données a l'aide de `SQL`
+ - Implémenter un stockage de données sécurisé en utilisant SQL
+ - Personnaliser le contenu envoyé à un client web.
 
 ![screenshot](GroupomaniaLogin.png)
 ![screenshot](GroupomaniaFeed.png)
