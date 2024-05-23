@@ -20,7 +20,7 @@ const PostComment = ({ onPost }) => {
         text: textValue,
       }),
     };
-    await fetch(`http://localhost:3000/api/messages/${id}/comment`, requestOptions)
+    await fetch(`http://https://polar-sea-78901-bf25cb159b01.herokuapp.com/api/messages/${id}/comment`, requestOptions)
       .then((response) => {
         if (response.status !== 201) {
 

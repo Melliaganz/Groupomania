@@ -27,7 +27,7 @@ const RegistrationForm = () => {
         password: passwordValue,
       }),
     };
-    fetch("http://localhost:3000/api/auth/signup", requestOptions)
+    fetch("http://https://polar-sea-78901-bf25cb159b01.herokuapp.com/api/auth/signup", requestOptions)
       .then((response) => {
         console.log(response.json());
         if (response.ok) {
