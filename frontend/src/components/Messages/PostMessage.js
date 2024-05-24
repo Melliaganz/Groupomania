@@ -21,7 +21,7 @@ const PostMessage = ({ onPost }) => {
         content: contentValue,
       }),
     };
-    await fetch("https://polar-sea-78901-bf25cb159b01.herokuapp.com/api/messages/new", requestOptions)
+    await fetch("https://polar-sea-78901-bf25cb159b01.herokuapp.com/messages/new", requestOptions)
       .then((response) => {
         if (response.status !== 201) {
 
