@@ -34,7 +34,7 @@ const EditAccount = ({ ...account }) => {
       body: data,
     };
     console.log(data);
-    fetch(`http://https://polar-sea-78901-bf25cb159b01.herokuapp.com/api/auth/account/${id}`, requestOptions)
+    fetch(`https://polar-sea-78901-bf25cb159b01.herokuapp.com/api/auth/account/${id}`, requestOptions)
       .then((response) => {
         console.log(data);
         if (response.ok) {

@@ -31,7 +31,7 @@ const LoginForm = ({ onLogin }) => {
     };
     console.log(requestOptions);
 
-    fetch("http://https://polar-sea-78901-bf25cb159b01.herokuapp.com/api/auth/login", requestOptions)
+    fetch("https://polar-sea-78901-bf25cb159b01.herokuapp.com/api/auth/login", requestOptions)
       .then((response) => {
         if (response.status === 200) {
           // Redirect
