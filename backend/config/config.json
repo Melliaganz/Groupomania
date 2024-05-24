@@ -3,21 +3,25 @@
     "username": "adm",
     "password": "hello",
     "database": "groupomania_development",
-    "host": "127.0.0.1",
-    "dialect": "mysql"
+    "host": "localhost",
+    "dialect": "postgres"
   },
   "test": {
     "username": "adm",
     "password": "hello",
     "database": "groupomania_test",
-    "host": "127.0.0.1",
-    "dialect": "mysql"
+    "host": "localhost",
+    "dialect": "postgres"
   },
   "production": {
     "username": "adm",
     "password": "hello",
     "database": "groupomania_production",
-    "host": "127.0.0.1",
-    "dialect": "mysql"
+    "host": "localhost",
+    "dialect": "postgres"
+  },
+  "production": {
+    "use_env_variable": "postgres://u773ek2msdlg5b:p6c9d509a70b13769916ddef55e68b531ae31d0dc7a90a6a131f53231e7708ee6@cat670aihdrkt1.cluster-czrs8kj4isg7.us-east-1.rds.amazonaws.com:5432/d6s57sqbfl85ib",
+    "dialect": "postgres"
   }
 }
