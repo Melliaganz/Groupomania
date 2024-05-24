@@ -34,7 +34,7 @@ const EditAccount = ({ ...account }) => {
       body: data,
     };
     console.log(data);
-    fetch(`https://polar-sea-78901-bf25cb159b01.herokuapp.com/auth/account/${id}`, requestOptions)
+    fetch(`https://groupomaniabacklucas-41ce31adf42c.herokuapp.com/auth/account/${id}`, requestOptions)
       .then((response) => {
         console.log(data);
         if (response.ok) {

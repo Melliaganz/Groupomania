@@ -31,7 +31,7 @@ const LoginForm = ({ onLogin }) => {
     };
     console.log(requestOptions);
 
-    fetch("https://polar-sea-78901-bf25cb159b01.herokuapp.com/auth/login", requestOptions)
+    fetch("https://groupomaniabacklucas-41ce31adf42c.herokuapp.com/auth/login", requestOptions)
       .then((response) => {
         if (response.status === 200) {
           // Redirect

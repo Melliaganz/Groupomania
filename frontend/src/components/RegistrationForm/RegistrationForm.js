@@ -27,7 +27,7 @@ const RegistrationForm = () => {
         password: passwordValue,
       }),
     };
-    fetch("https://polar-sea-78901-bf25cb159b01.herokuapp.com/auth/signup", requestOptions)
+    fetch("https://groupomaniabacklucas-41ce31adf42c.herokuapp.com/auth/signup", requestOptions)
       .then((response) => {
         console.log(response.json());
         if (response.ok) {
