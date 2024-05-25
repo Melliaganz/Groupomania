@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useHistory } from "react-router-dom";
 import logo from "../../images/icon-above-font-transparent.webp";
 import { userRegistered } from "../../_utils/toasts/users";
-import {REGEX} from "../../_utils/auth/auth.functions"
+import { REGEX } from "../../_utils/auth/auth.functions";
 import SaveAltIcon from '@mui/icons-material/SaveAlt';
 
 const RegistrationForm = () => {
@@ -10,11 +10,14 @@ const RegistrationForm = () => {
   const [passwordValue, setPasswordValue] = useState("");
   const [firstnameValue, setFirstnameValue] = useState("");
   const [surnameValue, setSurnameValue] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
   const history = useHistory();
 
-  const SendData = (e) => {
+  const sendData = (e) => {
     e.preventDefault();
-    console.log(emailValue, passwordValue, firstnameValue, surnameValue);
+    setLoading(true);
+    setError("");
 
     const requestOptions = {
       method: "POST",
@@ -27,22 +30,27 @@ const RegistrationForm = () => {
         password: passwordValue,
       }),
     };
-    fetch("https://groupomaniabacklucas-41ce31adf42c.herokuapp.com/auth/signup", requestOptions)
-      .then((response) => {
-        console.log(response.json());
+
+    fetch("https://groupomaniabacklucas-41ce31adf42c.herokuapp.com/api/auth/signup", requestOptions)
+      .then((response) => response.json().then(data => {
+        setLoading(false);
         if (response.ok) {
-          // Redirection to the wall of messages
           userRegistered();
           history.push("/");
+        } else {
+          setError(data.message || "Une erreur s'est produite. Veuillez réessayer.");
         }
-      })
-      .catch((error) => console.log(error));
-
+      }))
+      .catch((error) => {
+        setLoading(false);
+        setError("Une erreur s'est produite. Veuillez réessayer.");
+        console.error(error);
+      });
   };
 
   return (
     <section className="row mx-auto justify-content-center">
-      <div className="card col-11 bg-transparent ">
+      <div className="card col-11 bg-transparent">
         <img
           className="card-img-top mx-auto col-8"
           src={logo}
@@ -50,8 +58,8 @@ const RegistrationForm = () => {
         />
         <div className="card-body">
           <h1 className="h5 card-title text-center">S'enregistrer</h1>
-
-          <form onSubmit={SendData}>
+          {error && <div className="alert alert-danger" role="alert">{error}</div>}
+          <form onSubmit={sendData}>
             <div className="form-group">
               <label htmlFor="nom">Nom</label>
               <input
@@ -112,8 +120,8 @@ const RegistrationForm = () => {
               />
             </div>
 
-            <button type="submit" className="btn btn-primary">
-             <SaveAltIcon /> S'enregistrer
+            <button type="submit" className="btn btn-primary" disabled={loading}>
+              {loading ? "Enregistrement..." : <><SaveAltIcon /> S'enregistrer</>}
             </button>
           </form>
         </div>
