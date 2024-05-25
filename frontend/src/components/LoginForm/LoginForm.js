@@ -1,13 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 import logo from "../../images/icon-above-font-transparent.webp";
-import {isLogged} from "../../_utils/auth/auth.functions";
+import { isLogged } from "../../_utils/auth/auth.functions";
 import { userConnected } from "../../_utils/toasts/users";
 import LoginIcon from '@mui/icons-material/Login';
 
 const LoginForm = ({ onLogin }) => {
   const [emailValue, setEmailValue] = useState("");
   const [passwordValue, setPasswordValue] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
   const history = useHistory();
 
   useEffect(() => {
@@ -18,7 +20,8 @@ const LoginForm = ({ onLogin }) => {
 
   const sendData = (e) => {
     e.preventDefault();
-    console.log(emailValue, passwordValue);
+    setLoading(true);
+    setError("");
 
     const requestOptions = {
       method: "POST",
@@ -29,19 +32,25 @@ const LoginForm = ({ onLogin }) => {
         password: passwordValue,
       }),
     };
-    console.log(requestOptions);
 
-    fetch("https://groupomaniabacklucas-41ce31adf42c.herokuapp.com/auth/login", requestOptions)
+    fetch("https://groupomaniabacklucas-41ce31adf42c.herokuapp.com/api/auth/login", requestOptions)
       .then((response) => {
+        setLoading(false);
         if (response.status === 200) {
-          // Redirect
           history.push("/");
-          // Will update Header state
           onLogin();
           userConnected();
+        } else {
+          response.json().then(data => {
+            setError(data.message || "Une erreur s'est produite");
+          });
         }
       })
-      .catch((error) => console.log(error));
+      .catch((error) => {
+        setLoading(false);
+        setError("Une erreur s'est produite. Veuillez réessayer.");
+        console.log(error);
+      });
   };
 
   return (
@@ -50,6 +59,7 @@ const LoginForm = ({ onLogin }) => {
         <img className="card-img-top  mx-auto col-8" src={logo} alt="logo and name of the company Groupomania" />
         <div className="card-body ">
           <h2 className="h5 card-title  text-center">Se connecter</h2>
+          {error && <div className="alert alert-danger" role="alert">{error}</div>}
           <form onSubmit={sendData}>
             <div className="form-group ">
               <label htmlFor="email">Adresse E-mail</label>
@@ -77,9 +87,8 @@ const LoginForm = ({ onLogin }) => {
                 onChange={(event) => setPasswordValue(event.target.value)}
               />
             </div>
-
-            <button type="submit" className="btn btn-primary">
-             <LoginIcon /> Se connecter
+            <button type="submit" className="btn btn-primary" disabled={loading}>
+              {loading ? "Connexion..." : <><LoginIcon /> Se connecter</>}
             </button>
           </form>
         </div>
