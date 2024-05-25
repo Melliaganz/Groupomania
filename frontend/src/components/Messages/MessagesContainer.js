@@ -28,7 +28,7 @@ const MessageContainer = ({ ...params }) => {
         (res) => {
           if (res.status === 200) {
             res.json().then((result) => {
-              setMessages([...messages, ...result.messages]);
+              setMessages((prevMessages) => [...prevMessages, ...result.messages]);
               setTotalItems(result.totalItems);
               console.log(result);
               setIsLoaded(true);
@@ -41,7 +41,6 @@ const MessageContainer = ({ ...params }) => {
             setIsLoaded(true);
           }
         },
-
         (error) => {
           setError(error);
           setIsLoaded(true);
@@ -64,7 +63,6 @@ const MessageContainer = ({ ...params }) => {
             setIsLoaded(true);
           }
         },
-
         (error) => {
           setIsLoaded(true);
           setError(error);
@@ -77,7 +75,7 @@ const MessageContainer = ({ ...params }) => {
         (res) => {
           if (res.status === 200) {
             res.json().then((result) => {
-              setMessages([...messages, ...result.messages]);
+              setMessages((prevMessages) => [...prevMessages, ...result.messages]);
               setTotalItems(result.totalItems);
               console.log(result);
               setIsLoaded(true);
@@ -90,7 +88,6 @@ const MessageContainer = ({ ...params }) => {
             setIsLoaded(true);
           }
         },
-
         (error) => {
           setError(error);
           setIsLoaded(true);
@@ -101,33 +98,24 @@ const MessageContainer = ({ ...params }) => {
 
   useEffect(() => {
     fetchMessage();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [page, refetch]);
 
-  // Reset messages and pages on a new post.
   const handlePost = () => {
-    setRefetch((refetch) => refetch + 1);
-    setPage((page) => {
-      page = 0;
-    });
-    setMessages(messages.splice(0, messages.length));
-    
+    setRefetch((prevRefetch) => prevRefetch + 1);
+    setPage(0);
+    setMessages([]);
   };
+
   const handleCommentPost = () => {
-    setRefetch((refetch) => refetch + 1);
-    setPage((page) => {
-      page= 0;
-    });
-    setComments(comments.splice(0, comments.length));
-  }
+    setRefetch((prevRefetch) => prevRefetch + 1);
+    setPage(0);
+    setComments([]);
+  };
 
   const handleErase = () => {
-    setRefetch((refetch) => refetch + 1);
-    setPage((page) => {
-      page = 0;
-    });
+    setRefetch((prevRefetch) => prevRefetch + 1);
+    setPage(0);
     setIsLoaded(false);
-    
   };
 
   if (error && error === 404) {
@@ -154,16 +142,15 @@ const MessageContainer = ({ ...params }) => {
   } else if (
     messages &&
     messages.length > 0 &&
-    (params.messageQuery === "getAllUserMessages") |
-      (params.messageQuery === "getMessages")
+    (params.messageQuery === "getAllUserMessages" || params.messageQuery === "getMessages")
   ) {
     return (
       <React.Fragment>
         {params.postMessage ? <PostMessage onPost={handlePost} /> : null}
         <InfiniteScroll
-          dataLength={totalItems}
-          next={() => setPage(+1)}
-          hasMore={true}
+          dataLength={messages.length}
+          next={() => setPage((prevPage) => prevPage + 1)}
+          hasMore={messages.length < totalItems}
         >
           <section className="row justify-content-center ">
             {messages.map((message) => (
