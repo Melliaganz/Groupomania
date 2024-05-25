@@ -4,7 +4,10 @@
   "description": "",
   "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js",
+    "migrate": "npx sequelize-cli db:migrate",
+    "migrate:undo": "npx sequelize-cli db:migrate:undo"
   },
   "author": "",
   "license": "ISC",
@@ -26,9 +29,12 @@
     "mysql": "^2.18.1",
     "mysql2": "^2.2.5",
     "nodemon": "^2.0.6",
+    "pg": "^8.11.5",
     "postgres": "^3.4.4",
     "sequelize": "^6.37.3",
-    "sequelize-cli": "^6.2.0",
     "xss-clean": "^0.1.1"
+  },
+  "devDependencies": {
+    "sequelize-cli": "^6.6.2"
   }
 }
