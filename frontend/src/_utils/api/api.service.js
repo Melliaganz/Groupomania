@@ -1,21 +1,16 @@
 import config from "./_config";
 
-export default async function fetchApi({ path, page, requestOptions }) {
-  try {
-    const url = `${config.BASE_API}${path}${page ? `?${new URLSearchParams({ page })}` : ''}`;
-    const response = await fetch(url, requestOptions);
-
-    if (!response.ok) {
-      throw new Error(`HTTP error ${response.status}`);
-    }
-
-    const data = await response.json();
-    return data;
-  } catch (error) {
-    console.error('Error fetching data:', error);
-    throw error;
+export default function fetchApi(path, page, requestOptions) {
+  if (page) {
+    const result = fetch(
+      config.BASE_API + path + "?" + new URLSearchParams({ page: page }),
+      requestOptions
+    );
+    return result;
+  } else {
+    const result = fetch(config.BASE_API + path, requestOptions);
+    return result;
   }
 }
-
 
 // console.log(result.json());
