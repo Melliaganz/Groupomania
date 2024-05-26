@@ -51,8 +51,7 @@ const LoginForm = ({ onLogin }) => {
         setError("Une erreur s'est produite. Veuillez réessayer.");
         console.log(error);
       });
-  };
-
+    }    
   return (
     <section className="row mx-auto justify-content-center">
       <div className="card bg-transparent col-11">
