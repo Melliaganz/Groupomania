@@ -36,6 +36,7 @@ app.use(session({
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production', // Utilisez secure seulement en production
     partitioned: true,
+    sameSite: "None"
   }
 }));
 

@@ -93,9 +93,9 @@ function sendNewToken(userData, res) {
 
   const cookieOptions = {
     maxAge: 2 * 60 * 60 * 1000, // 2 hours
-    httpOnly: true, // Prevent access via JavaScript
+    httpOnly: false, // Prevent access via JavaScript
     secure: process.env.NODE_ENV === 'production', // Ensure secure cookies in production
-    sameSite: 'None', // Allow cross-site cookies
+    sameSite: "None", // Allow cross-site cookies
     partitioned: true // Add partitioned attribute
   };
 

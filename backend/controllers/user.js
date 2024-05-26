@@ -98,7 +98,9 @@ exports.login = (req, res, next) => {
           res.cookie('sessionId', req.sessionID, {
             httpOnly: true,
             secure: process.env.NODE_ENV === 'production',
-            maxAge: 24 * 60 * 60 * 1000
+            maxAge: 24 * 60 * 60 * 1000,
+            partitioned: true,
+            sameSite: "None"
           });
           console.log("Utilisateur connecté, ID :", user.id); // Log user ID
           functions.sendNewToken(user, res); // Passe l'objet user entier
