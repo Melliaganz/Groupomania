@@ -6,7 +6,7 @@ module.exports = (req, res, next) => {
     if (!token) {
       throw 'No token found';
     }
-    const decodedToken = jwt.verify(token, process.env.REACT_APP_JWT_TOKEN);
+    const decodedToken = jwt.verify(token, 'RANDOM_TOKEN_SECRET');
     const userId = decodedToken.userId;
     if (req.body.userId && req.body.userId !== userId) {
       throw 'Invalid user ID';

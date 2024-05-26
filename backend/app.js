@@ -17,7 +17,7 @@ app.use(helmet());
 
 // Enable CORS with specific origin and credentials
 const corsOptions = {
-  origin: process.env.CORSOPTIONS, // Your frontend URL
+  origin: 'https://groupomania-eta.vercel.app', // Your frontend URL
   credentials: true, // Allow credentials to be sent
   allowedHeaders: ['Origin', 'X-Requested-With', 'Content', 'Accept', 'Content-Type', 'Authorization'],
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
