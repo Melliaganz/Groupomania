@@ -33,25 +33,19 @@ const LoginForm = ({ onLogin }) => {
       }),
     };
 
-    fetch("https://groupomaniabacklucas-41ce31adf42c.herokuapp.com/api/auth/login", requestOptions)
-      .then((response) => {
-        setLoading(false);
-        if (response.status === 200) {
-          history.push("/");
-          onLogin();
-          userConnected();
-        } else {
-          response.json().then(data => {
-            setError(data.message || "Une erreur s'est produite");
-          });
-        }
-      })
-      .catch((error) => {
-        setLoading(false);
-        setError("Une erreur s'est produite. Veuillez réessayer.");
-        console.log(error);
-      });
-  };
+    fetchApi('auth/login', null, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username, password })
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.token) {
+        Cookies.set('token', data.token, { sameSite: 'None', secure: true });
+        // Set other cookies if necessary
+      }
+    })
+    .catch(error => console.error('Login error:', error));
 
   return (
     <section className="row mx-auto justify-content-center">

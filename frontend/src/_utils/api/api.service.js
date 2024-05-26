@@ -1,16 +1,12 @@
 import config from "./_config";
 
-export default function fetchApi(path, page, requestOptions) {
-  if (page) {
-    const result = fetch(
-      config.BASE_API + path + "?" + new URLSearchParams({ page: page }),
-      requestOptions
-    );
-    return result;
-  } else {
-    const result = fetch(config.BASE_API + path, requestOptions);
-    return result;
-  }
-}
+export default function fetchApi(path, page, requestOptions = {}) {
+  const url = page
+    ? `${config.BASE_API}${path}?${new URLSearchParams({ page })}`
+    : `${config.BASE_API}${path}`;
 
-// console.log(result.json());
+  return fetch(url, {
+    ...requestOptions,
+    credentials: 'include'  // Ensure credentials are always included
+  });
+}
