@@ -1,4 +1,4 @@
-import fetchApi from "../api/api.service";
+import api from "../api/api.service";
 import Cookies from "js-cookie";
 import { userLogout } from "../toasts/users";
 const CryptoJS = require("crypto-js");
@@ -25,46 +25,28 @@ function getIdFromCookie() {
   return groupomaniaId || false;
 }
 
-const logout = (page) => {
+const logout = async (page) => {
   Cookies.remove("groupomania");
   Cookies.remove("groupomaniaId");
 
-  const requestOptions = {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    credentials: "include",
-  };
-
-  return fetchApi("auth/logout", page, requestOptions)
-    .then((response) => {
-      if (response.ok) {
-        userLogout();
-      } else {
-        return response.json().then((data) => {
-          console.error("Logout failed:", data);
-        });
-      }
-    })
-    .catch((error) => console.error("Logout error:", error));
+  try {
+    const response = await api.post("auth/logout");
+    if (response.status === 200) {
+      userLogout();
+    } else {
+      console.error("Logout failed:", response.data);
+    }
+  } catch (error) {
+    console.error("Logout error:", error);
+  }
 };
 
-
 const getAccount = (accountId, page) => {
-  const requestOptions = {
-    method: "GET",
-    credentials: "include",
-  };
-  return fetchApi(`auth/account/${accountId}`, page, requestOptions);
+  return api.get(`auth/account/${accountId}`);
 };
 
 const deleteAccount = (accountId, page) => {
-  const requestOptions = {
-    method: "DELETE",
-    headers: { "Content-Type": "application/json" },
-    credentials: "include",
-  };
-
-  return fetchApi(`auth/account/${accountId}`, page, requestOptions);
+  return api.delete(`auth/account/${accountId}`);
 };
 
 export {
