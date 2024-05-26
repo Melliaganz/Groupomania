@@ -95,7 +95,7 @@ exports.getAllMessages = (req, res) => {
       const response = getPagingData(data, page, limit);
       res.send(response);
     })
-    .catch((error) => res.status(404).json(data));
+    // .catch((error) => res.status(404).json(data));
   // .then((messages) => {
   //   if (messages.length > 0) {
   //     res.status(200).json(messages);

@@ -1,4 +1,5 @@
 "use strict";
+
 module.exports = {
   up: async (queryInterface, Sequelize) => {
     await queryInterface.createTable("Messages", {
@@ -15,9 +16,7 @@ module.exports = {
           model: "Users",
           key: "id",
         },
-        constraints: true,
-        onDelete: 'CASCADE',
-        hooks: true,
+        onDelete: "CASCADE",
       },
       title: {
         allowNull: false,
@@ -29,20 +28,22 @@ module.exports = {
       },
       imageUrl: {
         allowNull: true,
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       likes: {
-        default: 0,
-        allowNull: false,
         type: Sequelize.INTEGER,
+        allowNull: false,
+        defaultValue: 0,
       },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE,
+        defaultValue: Sequelize.fn("now"),
       },
       updatedAt: {
         allowNull: false,
         type: Sequelize.DATE,
+        defaultValue: Sequelize.fn("now"),
       },
     });
   },

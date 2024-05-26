@@ -44,7 +44,7 @@ module.exports = {
       },
       login_attempts: {
         defaultValue: 0,
-        type: Sequelize.BOOLEAN
+        type: Sequelize.INTEGER
       },
       imageUrl: {
         type: Sequelize.STRING

@@ -56,7 +56,7 @@ const App = () => {
       <CookieConsent
       location="bottom"
       buttonText="Accepter"
-      cookieName="myAwesomeCookieName2"
+      cookieName="CookieConssenti"
       style={{ background: "#fd2d01" }}
       buttonStyle={{ background:"black", color: "white", fontSize: "13px" }}
       expires={150}
