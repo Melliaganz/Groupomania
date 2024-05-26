@@ -28,14 +28,15 @@ app.options('*', cors(corsOptions));
 
 app.use(cookieParser());
 app.use(session({
-  secret: 'yourSecretKey', // Remplacez par votre clé secrète
+  secret: 'RANDOM_TOKEN_SECRET', // Remplacez par votre clé secrète
   resave: false,
   saveUninitialized: true,
   cookie: {
     maxAge: 24 * 60 * 60 * 1000, // 24 heures
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production', // Utilisez secure seulement en production
-    sameSite: 'lax'
+    sameSite: 'None',
+    partitioned: true,
   }
 }));
 app.use(bodyParser.urlencoded({ extended: true }));
