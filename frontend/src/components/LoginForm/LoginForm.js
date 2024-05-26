@@ -4,6 +4,7 @@ import logo from "../../images/icon-above-font-transparent.webp";
 import { isLogged } from "../../_utils/auth/auth.functions";
 import { userConnected } from "../../_utils/toasts/users";
 import LoginIcon from '@mui/icons-material/Login';
+import api from '../../_utils/api/api'; // Importez l'instance d'axios configurée
 
 const LoginForm = ({ onLogin }) => {
   const [emailValue, setEmailValue] = useState("");
@@ -23,26 +24,18 @@ const LoginForm = ({ onLogin }) => {
     setLoading(true);
     setError("");
 
-    const requestOptions = {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      credentials: "include", // Inclure les credentials dans les requêtes
-      body: JSON.stringify({
+    try {
+      const response = await api.post('/auth/login', {
         email: emailValue,
         password: passwordValue,
-      }),
-    };
-
-    try {
-      const response = await fetch("https://groupomaniabacklucas-41ce31adf42c.herokuapp.com/api/auth/login", requestOptions);
+      });
       setLoading(false);
       if (response.status === 200) {
         history.push("/");
         onLogin();
         userConnected();
       } else {
-        const data = await response.json();
-        setError(data.message || "Une erreur s'est produite");
+        setError(response.data.message || "Une erreur s'est produite");
       }
     } catch (error) {
       setLoading(false);

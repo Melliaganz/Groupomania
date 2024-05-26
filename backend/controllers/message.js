@@ -30,11 +30,12 @@ exports.createMessage = (req, res) => {
           title: title,
           content: content,
           likes: 0,
-          UserId: user.id,
+          userId: user.id, // Assurez-vous d'inclure userId
+          imageUrl: req.file ? `${req.protocol}://${req.get('host')}/images/${req.file.filename}` : null,
         })
           .then((newMessage) => {
             if (newMessage) {
-              return res.status(201).json({ Message: "Message posted !" });
+              return res.status(201).json({ message: "Message posted!" });
             } else {
               return res.status(500).json({ error: "Cannot post message" });
             }

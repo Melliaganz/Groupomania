@@ -99,16 +99,19 @@ function sendNewToken(userData, res) {
     partitioned: true // Add partitioned attribute
   };
 
+  console.log("Envoi des cookies avec userId :", userData.id); // Log user ID
+
   res
     .status(200)
     .cookie("token", newToken, cookieOptions)
-    .cookie("groupomania", true, { ...cookieOptions, httpOnly: false, partitioned: true }) // Add partitioned attribute
-    .cookie("groupomaniaId", userData.id, { ...cookieOptions, httpOnly: false, partitioned: true }) // Add partitioned attribute
+    .cookie("groupomania", true, { ...cookieOptions, httpOnly: false })
+    .cookie("groupomaniaId", userData.id, { ...cookieOptions, httpOnly: false })
     .json({
       userId: userData.id,
       token: newToken,
     });
 }
+
 
 
 

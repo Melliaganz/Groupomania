@@ -26,34 +26,15 @@ exports.signup = (req, res, next) => {
   let surname = req.body.surname;
   let password = req.body.password;
   let imageUrl = "https://freeimghost.net/images/2022/05/25/icon1653051982534.webp";
-
-  // Hash the email the have a unique validation
   let emailHash = cryptoJS.MD5(req.body.email).toString();
-  // Encrypt the email with crypto-js ( Secret passphrase needs to be changed in production )
-  let emailEncrypted = cryptoJS.AES.encrypt(
-    req.body.email,
-    "Secret Passphrase"
-  ).toString();
+  let emailEncrypted = cryptoJS.AES.encrypt(req.body.email, "Secret Passphrase").toString();
 
-  if (
-    emailHash == null ||
-    name == null ||
-    surname == null ||
-    password == null
-  ) {
+  if (emailHash == null || name == null || surname == null || password == null) {
     return res.status(400).json({ error: "missing parameters" });
   }
 
-  // TODO check variables
-  if (
-    name.length >= 20 ||
-    name.length < 2 ||
-    surname.length >= 20 ||
-    surname.length < 2
-  ) {
-    return res
-      .status(400)
-      .json({ error: "Wrong name or surname (must be length 2 - 30)" });
+  if (name.length >= 20 || name.length < 2 || surname.length >= 20 || surname.length < 2) {
+    return res.status(400).json({ error: "Wrong name or surname (must be length 2 - 30)" });
   }
 
   if (!EMAIL_REGEX.test(req.body.email)) {
@@ -61,20 +42,13 @@ exports.signup = (req, res, next) => {
   }
 
   if (!functions.checkPassword(password)) {
-    return res.status(400).json({
-      error: "Password is not valid (must be length min 4 and include 1 number",
-    });
+    return res.status(400).json({ error: "Password is not valid (must be length min 4 and include 1 number" });
   }
 
-  // Check if user already exist
-  models.User.findOne({
-    attributes: ["emailHash"],
-    where: { emailHash: emailHash },
-  })
+  models.User.findOne({ attributes: ["emailHash"], where: { emailHash: emailHash } })
     .then((user) => {
       if (!user) {
-        bcrypt
-          .hash(password, 10)
+        bcrypt.hash(password, 10)
           .then(async (hash) => {
             const newUser = await models.User.create({
               name: name,
@@ -85,14 +59,9 @@ exports.signup = (req, res, next) => {
               imageUrl: imageUrl,
               admin: 0,
             });
-            newUser
-              .save()
-              .then(() =>
-                res.status(201).json({
-                  message:
-                    "Utilisateur créé ! " + "userId " + ": " + newUser.id,
-                })
-              )
+            console.log("Nouvel utilisateur créé, ID :", newUser.id); // Log user ID
+            newUser.save()
+              .then(() => res.status(201).json({ message: "Utilisateur créé ! userId : " + newUser.id }))
               .catch((error) => res.status(400).json({ error }));
           })
           .catch((error) => res.status(500).json({ error }));
@@ -105,8 +74,8 @@ exports.signup = (req, res, next) => {
     });
 };
 
+
 exports.login = (req, res, next) => {
-  console.log("email: " + req.body.email + " password: " + req.body.password);
   let emailHash = cryptoJS.MD5(req.body.email).toString();
   let password = req.body.password;
 
@@ -114,74 +83,32 @@ exports.login = (req, res, next) => {
     return res.status(400).json({ error: "Missing parameters" });
   }
 
-  models.User.findOne({
-    where: { emailHash: emailHash },
-  })
+  models.User.findOne({ where: { emailHash: emailHash } })
     .then((user) => {
       if (!user) {
         return res.status(401).json({ error: "Nom d'utilisateur (ou mot de passe) incorrect" });
       }
-      
-      if (functions.checkIfAccountIsLocked(user.lock_until)) {
-        let waitingTime = (user.lock_until - Date.now()) / 1000 / 60;
-        return res.status(401).json({ error: "Compte bloqué, revenez dans: " + waitingTime + " minutes" });
-      }
 
-      if (user.lock_until && user.lock_until <= Date.now()) {
-        functions.resetUserLockAttempt(emailHash, user).then(() => {
-          bcrypt.compare(req.body.password, user.password).then((valid) => {
-            if (!valid) {
-              functions.incrementLoginAttempt(emailHash, user).catch((error) => console.log({ error }));
-              return res.status(401).json({ error: "Mot de passe (ou email) incorrect !" });
-            } else {
-              req.session.userId = user.id; // Store user ID in session
-              res.cookie('sessionId', req.sessionID, {
-                httpOnly: true,
-                secure: process.env.NODE_ENV === 'production',
-                maxAge: 24 * 60 * 60 * 1000 // 24 hours
-              });
-              functions.sendNewToken(user.id, res);
-            }
-          }).catch((error) => res.status(500).json({ error }));
-        }).catch((error) => console.log({ error }));
-      } else {
-        bcrypt.compare(req.body.password, user.password).then((valid) => {
-          if (!valid && user.login_attempts + 1 >= MAX_LOGIN_ATTEMPTS) {
-            functions.blockUserAccount(emailHash, user).catch((error) => console.log({ error }));
-            return res.status(401).json({ error: "Mot de passe (ou email) incorrect ! Vous avez atteint le nombre maximum d'essai, votre compte est maintenant bloqué!" });
-          }
-          if (!valid && user.login_attempts + 1 < MAX_LOGIN_ATTEMPTS) {
-            try {
-              functions.incrementLoginAttempt(emailHash, user);
-            } catch (e) {
-              console.log(e);
-            }
-            return res.status(401).json({ error: "Mot de passe (ou email) incorrect !" });
-          }
-          if (user.login_attempts > 0) {
-            functions.resetUserLockAttempt(emailHash, user).then(() => {
-              req.session.userId = user.id;
-              res.cookie('sessionId', req.sessionID, {
-                httpOnly: true,
-                secure: process.env.NODE_ENV === 'production',
-                maxAge: 24 * 60 * 60 * 1000
-              });
-              functions.sendNewToken(user, res);
-            }).catch((error) => console.log({ error }));
-          } else {
-            req.session.userId = user.id;
-            res.cookie('sessionId', req.sessionID, {
-              httpOnly: true,
-              secure: process.env.NODE_ENV === 'production',
-              maxAge: 24 * 60 * 60 * 1000
-            });
-            functions.sendNewToken(user, res);
-          }
-        }).catch((error) => res.status(500).json({ error }));
-      }
+      bcrypt.compare(req.body.password, user.password).then((valid) => {
+        if (!valid) {
+          functions.incrementLoginAttempt(emailHash, user).catch((error) => console.log({ error }));
+          return res.status(401).json({ error: "Mot de passe (ou email) incorrect !" });
+        } else {
+          req.session.userId = user.id;
+          res.cookie('sessionId', req.sessionID, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            maxAge: 24 * 60 * 60 * 1000
+          });
+          console.log("Utilisateur connecté, ID :", user.id); // Log user ID
+          functions.sendNewToken(user, res); // Passe l'objet user entier
+        }
+      }).catch((error) => res.status(500).json({ error }));
     })
     .catch((error) => res.status(500).json({ error }));
 };
+
+
 
 
 exports.getUserProfile = (req, res, next) => {

@@ -22,9 +22,9 @@ const corsOptions = {
   allowedHeaders: ['Origin', 'X-Requested-With', 'Content', 'Accept', 'Content-Type', 'Authorization'],
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
 };
-
 app.use(cors(corsOptions));
 app.options('*', cors(corsOptions));
+
 
 app.use(cookieParser());
 app.use(session({
@@ -35,10 +35,10 @@ app.use(session({
     maxAge: 24 * 60 * 60 * 1000, // 24 heures
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production', // Utilisez secure seulement en production
-    sameSite: 'None',
     partitioned: true,
   }
 }));
+
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use('/images', express.static(path.join(__dirname, 'images')));
