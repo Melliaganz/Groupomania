@@ -3,7 +3,7 @@ import { toastMessagePosted } from "../../_utils/toasts/messages";
 import "react-toastify/dist/ReactToastify.css";
 import { REGEX } from "../../_utils/auth/auth.functions";
 import PostAddIcon from '@mui/icons-material/PostAdd';
-import api from "../../_utils/api"; // Importez l'instance d'axios configurée
+import api from "../../_utils/api/api"; // Importez l'instance d'axios configurée
 
 const PostMessage = ({ onPost }) => {
   const [titleValue, setTitleValue] = useState("");
