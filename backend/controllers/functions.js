@@ -93,24 +93,22 @@ function sendNewToken(userData, res) {
 
   const cookieOptions = {
     maxAge: 2 * 60 * 60 * 1000, // 2 hours
-    httpOnly: true,
-    secure: true, 
-    sameSite: null
+    httpOnly: true, // Prevent access via JavaScript
+    secure: process.env.NODE_ENV === 'production', // Ensure secure cookies in production
+    sameSite: 'None', // Allow cross-site cookies
+    partitioned: true // Add partitioned attribute
   };
 
   res
     .status(200)
     .cookie("token", newToken, cookieOptions)
-    .cookie("groupomania", true, { ...cookieOptions, httpOnly: true })
-    .cookie("groupomaniaId", userData.id, { ...cookieOptions, httpOnly: true })
+    .cookie("groupomania", true, { ...cookieOptions, httpOnly: false, partitioned: true }) // Add partitioned attribute
+    .cookie("groupomaniaId", userData.id, { ...cookieOptions, httpOnly: false, partitioned: true }) // Add partitioned attribute
     .json({
       userId: userData.id,
       token: newToken,
     });
 }
-
-
-
 
 
 

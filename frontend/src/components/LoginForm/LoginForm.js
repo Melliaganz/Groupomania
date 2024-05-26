@@ -13,12 +13,12 @@ const LoginForm = ({ onLogin }) => {
   const history = useHistory();
 
   useEffect(() => {
-    if (history && isLogged()) {
+    if (isLogged()) {
       history.push("/");
     }
   }, [history]);
 
-  const sendData = (e) => {
+  const sendData = async (e) => {
     e.preventDefault();
     setLoading(true);
     setError("");
@@ -26,41 +26,40 @@ const LoginForm = ({ onLogin }) => {
     const requestOptions = {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      credentials: "include",
+      credentials: "include", // Inclure les credentials dans les requêtes
       body: JSON.stringify({
         email: emailValue,
         password: passwordValue,
       }),
     };
-    
-    fetch("https://groupomaniabacklucas-41ce31adf42c.herokuapp.com/api/auth/login", requestOptions)
-      .then((response) => {
-        setLoading(false);
-        if (response.status === 200) {
-          history.push("/");
-          onLogin();
-          userConnected();
-        } else {
-          response.json().then(data => {
-            setError(data.message || "Une erreur s'est produite");
-          });
-        }
-      })
-      .catch((error) => {
-        setLoading(false);
-        setError("Une erreur s'est produite. Veuillez réessayer.");
-        console.log(error);
-      });
-    }    
+
+    try {
+      const response = await fetch("https://groupomaniabacklucas-41ce31adf42c.herokuapp.com/api/auth/login", requestOptions);
+      setLoading(false);
+      if (response.status === 200) {
+        history.push("/");
+        onLogin();
+        userConnected();
+      } else {
+        const data = await response.json();
+        setError(data.message || "Une erreur s'est produite");
+      }
+    } catch (error) {
+      setLoading(false);
+      setError("Une erreur s'est produite. Veuillez réessayer.");
+      console.log(error);
+    }
+  };
+
   return (
     <section className="row mx-auto justify-content-center">
       <div className="card bg-transparent col-11">
-        <img className="card-img-top  mx-auto col-8" src={logo} alt="logo and name of the company Groupomania" />
-        <div className="card-body ">
-          <h2 className="h5 card-title  text-center">Se connecter</h2>
+        <img className="card-img-top mx-auto col-8" src={logo} alt="logo and name of the company Groupomania" />
+        <div className="card-body">
+          <h2 className="h5 card-title text-center">Se connecter</h2>
           {error && <div className="alert alert-danger" role="alert">{error}</div>}
           <form onSubmit={sendData}>
-            <div className="form-group ">
+            <div className="form-group">
               <label htmlFor="email">Adresse E-mail</label>
               <input
                 name="email"

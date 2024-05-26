@@ -40,13 +40,15 @@ exports.createMessage = (req, res) => {
             }
           })
           .catch((error) => {
-            return res.status(500).json({ error: "Internal error" });
+            console.error("Error creating message:", error);
+            return res.status(500).json({ error: "Internal error", error });
           });
       } else {
         return res.status(404).json({ error: "User not found" });
       }
     })
     .catch((error) => {
+      console.error("Error verifying user:", error);
       return res.status(500).json({ error: "Unable to verify user" });
     });
 };

@@ -114,104 +114,75 @@ exports.login = (req, res, next) => {
     return res.status(400).json({ error: "Missing parameters" });
   }
 
-  // Check if user already exist
   models.User.findOne({
     where: { emailHash: emailHash },
   })
     .then((user) => {
-      // If the user is not found return error
       if (!user) {
-        return res
-          .status(401)
-          .json({ error: "Nom d'utilisateur (ou mot de passe) incorrect" });
+        return res.status(401).json({ error: "Nom d'utilisateur (ou mot de passe) incorrect" });
       }
-      // Test if the account is already locked
+      
       if (functions.checkIfAccountIsLocked(user.lock_until)) {
         let waitingTime = (user.lock_until - Date.now()) / 1000 / 60;
-        return res.status(401).json({
-          error: "Compte bloqué, revenez dans: " + waitingTime + " minutes",
-        });
+        return res.status(401).json({ error: "Compte bloqué, revenez dans: " + waitingTime + " minutes" });
       }
-      // If the lockUntil is finished => reset loginAttempt
+
       if (user.lock_until && user.lock_until <= Date.now()) {
-        // Reset of loginAttempt
-        functions
-          .resetUserLockAttempt(emailHash, user)
-          //
-          .then(() => {
-            bcrypt
-              .compare(req.body.password, user.password)
-              .then((valid) => {
-                // If the password is wrong but the max connection attempt is not reached, then increment the loginAttempt by 1
-                if (!valid) {
-                  // Increment value to the loginAttempts
-                  functions
-                    .incrementLoginAttempt(emailHash, user)
-                    .catch((error) => console.log({ error }));
-                  //
-                  return res
-                    .status(401)
-                    .json({ error: "Mot de passe (ou email) incorrect !" });
-                } else {
-                  // User connected, send a simple toker
-                  functions.sendNewToken(user._id, res);
-                  //.catch((error) => console.log({ error }));
-                  //
-                }
-              })
-              .catch((error) => res.status(500).json({ error }));
-          })
-          .catch((error) => console.log({ error }));
-        //
-      } else {
-        bcrypt
-          .compare(req.body.password, user.password)
-          .then((valid) => {
-            // If it's a wrong password and the connection attempt is reached, then block the account
-            if (!valid && user.login_attempts + 1 >= MAX_LOGIN_ATTEMPTS) {
-              console.log(
-                "Limite d'essai de connection atteinte, blockage du compte"
-              );
-              functions
-                .blockUserAccount(emailHash, user)
-                .catch((error) => console.log({ error }));
-              return res.status(401).json({
-                error:
-                  "Mot de passe (ou email) incorrect ! Vous avez atteint le nombre maximum d'essai, votre compte est maintenant bloqué!",
-              });
-            }
-            // If the password is wrong but the max connection attempt is not reached, then increment the loginAttempt by 1
-            if (!valid && user.login_attempts + 1 < MAX_LOGIN_ATTEMPTS) {
-              console.log("increment value stade 1");
-              // Increment value to the loginAttempts
-              try {
-                functions.incrementLoginAttempt(emailHash, user);
-              } catch (e) {
-                console.log(e);
-              }
-              //
-              return res
-                .status(401)
-                .json({ error: "Mot de passe (ou email) incorrect !" });
-            }
-            // If the user is connected but had loginAttempt > 0 => reset try + send token
-            if (user.login_attempts > 0) {
-              functions
-                .resetUserLockAttempt(emailHash, user)
-                .then(() => {
-                  functions.sendNewToken(user, res);
-                })
-                .catch((error) => console.log({ error }));
+        functions.resetUserLockAttempt(emailHash, user).then(() => {
+          bcrypt.compare(req.body.password, user.password).then((valid) => {
+            if (!valid) {
+              functions.incrementLoginAttempt(emailHash, user).catch((error) => console.log({ error }));
+              return res.status(401).json({ error: "Mot de passe (ou email) incorrect !" });
             } else {
-              // User connected, send a simple token in a cookie
-              functions.sendNewToken(user, res);
+              req.session.userId = user.id; // Store user ID in session
+              res.cookie('sessionId', req.sessionID, {
+                httpOnly: true,
+                secure: process.env.NODE_ENV === 'production',
+                maxAge: 24 * 60 * 60 * 1000 // 24 hours
+              });
+              functions.sendNewToken(user.id, res);
             }
-          })
-          .catch((error) => res.status(500).json({ error: error }));
+          }).catch((error) => res.status(500).json({ error }));
+        }).catch((error) => console.log({ error }));
+      } else {
+        bcrypt.compare(req.body.password, user.password).then((valid) => {
+          if (!valid && user.login_attempts + 1 >= MAX_LOGIN_ATTEMPTS) {
+            functions.blockUserAccount(emailHash, user).catch((error) => console.log({ error }));
+            return res.status(401).json({ error: "Mot de passe (ou email) incorrect ! Vous avez atteint le nombre maximum d'essai, votre compte est maintenant bloqué!" });
+          }
+          if (!valid && user.login_attempts + 1 < MAX_LOGIN_ATTEMPTS) {
+            try {
+              functions.incrementLoginAttempt(emailHash, user);
+            } catch (e) {
+              console.log(e);
+            }
+            return res.status(401).json({ error: "Mot de passe (ou email) incorrect !" });
+          }
+          if (user.login_attempts > 0) {
+            functions.resetUserLockAttempt(emailHash, user).then(() => {
+              req.session.userId = user.id;
+              res.cookie('sessionId', req.sessionID, {
+                httpOnly: true,
+                secure: process.env.NODE_ENV === 'production',
+                maxAge: 24 * 60 * 60 * 1000
+              });
+              functions.sendNewToken(user, res);
+            }).catch((error) => console.log({ error }));
+          } else {
+            req.session.userId = user.id;
+            res.cookie('sessionId', req.sessionID, {
+              httpOnly: true,
+              secure: process.env.NODE_ENV === 'production',
+              maxAge: 24 * 60 * 60 * 1000
+            });
+            functions.sendNewToken(user, res);
+          }
+        }).catch((error) => res.status(500).json({ error }));
       }
     })
     .catch((error) => res.status(500).json({ error }));
 };
+
 
 exports.getUserProfile = (req, res, next) => {
   // Getting auth header
@@ -352,5 +323,11 @@ exports.deleteUserProfile = (req, res) => {
 };
 
 exports.logout = (req, res, next) => {
-  functions.eraseCookie(res);
+  req.session.destroy((err) => {
+    if (err) {
+      return res.status(500).json({ error: 'Failed to log out!' });
+    }
+    res.clearCookie('sessionId');
+    res.status(200).json({ message: 'Logged out successfully!' });
+  });
 };

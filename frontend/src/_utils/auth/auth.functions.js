@@ -25,7 +25,7 @@ function getIdFromCookie() {
   return groupomaniaId || false;
 }
 
-function logout(page) {
+const logout = (page) => {
   Cookies.remove("groupomania");
   Cookies.remove("groupomaniaId");
 
@@ -46,7 +46,7 @@ function logout(page) {
       }
     })
     .catch((error) => console.error("Logout error:", error));
-}
+};
 
 const getAccount = (accountId, page) => {
   const requestOptions = {
