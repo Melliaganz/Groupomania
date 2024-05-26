@@ -40,6 +40,7 @@ const deleteOneMessage = (messageId, page) => {
 
   return fetchApi(`messages/${messageId}`, page, requestOptions)
   .then(() => toastMessageDeleted());
+  
 };
 
 
