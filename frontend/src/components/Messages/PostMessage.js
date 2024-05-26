@@ -3,39 +3,32 @@ import { toastMessagePosted } from "../../_utils/toasts/messages";
 import "react-toastify/dist/ReactToastify.css";
 import { REGEX } from "../../_utils/auth/auth.functions";
 import PostAddIcon from '@mui/icons-material/PostAdd';
+import api from "../../_utils/api"; // Importez l'instance d'axios configurée
 
 const PostMessage = ({ onPost }) => {
   const [titleValue, setTitleValue] = useState("");
   const [contentValue, setContentValue] = useState("");
 
-  async function SendData(e) {
+  const SendData = async (e) => {
     e.preventDefault();
     console.log(titleValue, contentValue);
 
-    const requestOptions = {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      credentials: "include",
-      body: JSON.stringify({
+    try {
+      const response = await api.post('/messages/new', {
         title: titleValue,
         content: contentValue,
-      }),
-    };
-    await fetch("https://groupomaniabacklucas-41ce31adf42c.herokuapp.com/api/messages/new", requestOptions)
-      .then((response) => {
-        if (response.status !== 201) {
+      });
 
-        } else {
-          onPost();
-          setTitleValue("");
-          setContentValue("");
-          toastMessagePosted();
-        }
-      })
-
-      .catch((error) => console.log(error));
-
-  }
+      if (response.status === 201) {
+        onPost();
+        setTitleValue("");
+        setContentValue("");
+        toastMessagePosted();
+      }
+    } catch (error) {
+      console.error("Error posting message:", error);
+    }
+  };
 
   return (
     <section className="row justify-content-center mb-5 ">
