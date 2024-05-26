@@ -1,48 +1,26 @@
-import fetchApi from "../api/api.service";
+import api from "../api/api.service";
 import { toastMessageDeleted } from "../toasts/messages";
 
-const getMessages = (page) => {
-  const requestOptions = {
-    method: "GET",
-    headers: { "Content-Type": "application/json" },
-    credentials: "include",
-  };
-
-  return fetchApi(`messages`, page, requestOptions);
+const getMessages = () => {
+  return api.get('messages');
 };
 
-const getAllUserMessages = (userId, page) => {
-  const requestOptions = {
-    method: "GET",
-    headers: { "Content-Type": "application/json" },
-    credentials: "include",
-  };
-
-  return fetchApi(`messages/userMessages/${userId}`, page, requestOptions);
+const getAllUserMessages = (userId) => {
+  return api.get(`messages/userMessages/${userId}`);
 };
 
-const getOneMessage = (messageId, page) => {
-  const requestOptions = {
-    method: "GET",
-    headers: { "Content-Type": "application/json" },
-    credentials: "include",
-  };
-
-  return fetchApi(`messages/${messageId}`, page, requestOptions);
+const getOneMessage = (messageId) => {
+  return api.get(`messages/${messageId}`);
 };
 
-const deleteOneMessage = (messageId, page) => {
-  const requestOptions = {
-    method: "DELETE",
-    headers: { "Content-Type": "application/json" },
-    credentials: "include",
-  };
-
-  return fetchApi(`messages/${messageId}`, page, requestOptions)
-  .then(() => toastMessageDeleted());
-  
+const deleteOneMessage = async (messageId) => {
+  try {
+    await api.delete(`messages/${messageId}`);
+    toastMessageDeleted();
+  } catch (error) {
+    console.error("Error deleting message:", error);
+  }
 };
-
 
 export {
   getOneMessage,

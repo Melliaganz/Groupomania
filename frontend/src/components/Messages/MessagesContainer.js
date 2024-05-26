@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import Message from "./Message";
 import { useParams } from "react-router-dom";
 import {
@@ -20,85 +20,50 @@ const MessageContainer = ({ ...params }) => {
   const [page, setPage] = useState(0);
   const [totalItems, setTotalItems] = useState(0);
   const [refetch, setRefetch] = useState(0);
-  const [comments, setComments] = useState([]);
 
-  const fetchMessage = () => {
+  const fetchMessage = useCallback(() => {
     if (params.messageQuery === "getMessages") {
-      getMessages(page).then(
-        (res) => {
-          if (res.status === 200) {
-            res.json().then((result) => {
-              setMessages((prevMessages) => [...prevMessages, ...result.messages]);
-              setTotalItems(result.totalItems);
-              console.log(result);
-              setIsLoaded(true);
-            });
-          } else if (res.status === 404) {
-            setError(404);
-            setIsLoaded(true);
-          } else {
-            setError(res.statusText);
-            setIsLoaded(true);
-          }
-        },
-        (error) => {
-          setError(error);
+      getMessages(page)
+        .then((response) => {
+          const result = response.data;
+          setMessages((prevMessages) => [...prevMessages, ...result.messages]);
+          setTotalItems(result.totalItems);
+          console.log(result);
           setIsLoaded(true);
-        }
-      );
-    }
-    if (params.messageQuery === "getOneMessage") {
-      getOneMessage(id).then(
-        (res) => {
-          if (res.status === 200) {
-            res.json().then((result) => {
-              setMessages(result);
-              setIsLoaded(true);
-            });
-          } else if (res.status === 404) {
-            setError(404);
-            setIsLoaded(true);
-          } else {
-            setError(res.statusText);
-            setIsLoaded(true);
-          }
-        },
-        (error) => {
+        })
+        .catch((error) => {
+          setError(error.response ? error.response.status : error.message);
           setIsLoaded(true);
-          setError(error);
-        }
-      );
-    }
-
-    if (params.messageQuery === "getAllUserMessages") {
-      getAllUserMessages(id, page).then(
-        (res) => {
-          if (res.status === 200) {
-            res.json().then((result) => {
-              setMessages((prevMessages) => [...prevMessages, ...result.messages]);
-              setTotalItems(result.totalItems);
-              console.log(result);
-              setIsLoaded(true);
-            });
-          } else if (res.status === 404) {
-            setError(404);
-            setIsLoaded(true);
-          } else {
-            setError(res.statusText);
-            setIsLoaded(true);
-          }
-        },
-        (error) => {
-          setError(error);
+        });
+    } else if (params.messageQuery === "getOneMessage") {
+      getOneMessage(id)
+        .then((response) => {
+          setMessages(response.data);
           setIsLoaded(true);
-        }
-      );
+        })
+        .catch((error) => {
+          setError(error.response ? error.response.status : error.message);
+          setIsLoaded(true);
+        });
+    } else if (params.messageQuery === "getAllUserMessages") {
+      getAllUserMessages(id, page)
+        .then((response) => {
+          const result = response.data;
+          setMessages((prevMessages) => [...prevMessages, ...result.messages]);
+          setTotalItems(result.totalItems);
+          console.log(result);
+          setIsLoaded(true);
+        })
+        .catch((error) => {
+          setError(error.response ? error.response.status : error.message);
+          setIsLoaded(true);
+        });
     }
-  };
+  }, [params.messageQuery, page, id]);
 
   useEffect(() => {
     fetchMessage();
-  }, [page, refetch]);
+  }, [page, refetch, fetchMessage]);
 
   const handlePost = () => {
     setRefetch((prevRefetch) => prevRefetch + 1);
@@ -109,7 +74,6 @@ const MessageContainer = ({ ...params }) => {
   const handleCommentPost = () => {
     setRefetch((prevRefetch) => prevRefetch + 1);
     setPage(0);
-    setComments([]);
   };
 
   const handleErase = () => {
@@ -135,7 +99,7 @@ const MessageContainer = ({ ...params }) => {
           <div className="col-12 mb-3  ">
             <Message {...messages} onErase={handleErase} />
           </div>
-          <div><PostComment onPost={handleCommentPost}/></div>
+          <div><PostComment onPost={handleCommentPost} /></div>
         </section>
       </React.Fragment>
     );
@@ -173,4 +137,5 @@ const MessageContainer = ({ ...params }) => {
     );
   }
 };
+
 export default MessageContainer;

@@ -1,35 +1,19 @@
-import fetchApi from "../api/api.service"
+import api from "../api/api.service";
 
-const getMessageAllComments = (messageId, page) => {
-    const requestOptions = {
-      method: "GET",
-      headers: { "Content-Type": "application/json" },
-      credentials: "include",
-    };
-    return fetchApi(`messages/${messageId}/comments`, page, requestOptions)
-  };
-  const deleteOneComment = (commentId, messageId, page) => {
-      const requestOptions = {
-          method: "DELETE",
-          headers: {"Content-Type": "application/json" },
-          credentials: "include",
-      };
-      
-      return fetchApi(`messages/${messageId}/comment/${commentId}`, page, requestOptions)
-  }
+const getMessageAllComments = (messageId) => {
+  return api.get(`messages/${messageId}/comments`);
+};
 
-  const getOneComment = (commentId, messageId, page) => {
-      const requestOptions = {
-          method: "GET",
-          headers: { "Content-Type": "application.json"},
-          credentials: "include",
-      }
+const deleteOneComment = (commentId, messageId) => {
+  return api.delete(`messages/${messageId}/comment/${commentId}`);
+};
 
-      return fetchApi(`messages/${messageId}/comment/${commentId},`, page, requestOptions)
-  }
+const getOneComment = (commentId, messageId) => {
+  return api.get(`messages/${messageId}/comment/${commentId}`);
+};
 
-  export {
-      getMessageAllComments,
-      deleteOneComment,
-      getOneComment,
-  }
+export {
+  getMessageAllComments,
+  deleteOneComment,
+  getOneComment,
+};

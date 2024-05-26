@@ -4,6 +4,7 @@ import logo from "../../images/icon-above-font-transparent.webp";
 import { userRegistered } from "../../_utils/toasts/users";
 import { REGEX } from "../../_utils/auth/auth.functions";
 import SaveAltIcon from '@mui/icons-material/SaveAlt';
+import api from "../../_utils/api/api"; // Importez l'instance d'axios configurée
 
 const RegistrationForm = () => {
   const [emailValue, setEmailValue] = useState("");
@@ -14,38 +15,31 @@ const RegistrationForm = () => {
   const [error, setError] = useState("");
   const history = useHistory();
 
-  const sendData = (e) => {
+  const sendData = async (e) => {
     e.preventDefault();
     setLoading(true);
     setError("");
 
-    const requestOptions = {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      credentials: "include",
-      body: JSON.stringify({
+    try {
+      const response = await api.post('/auth/signup', {
         name: firstnameValue,
         surname: surnameValue,
         email: emailValue,
         password: passwordValue,
-      }),
-    };
-
-    fetch("https://groupomaniabacklucas-41ce31adf42c.herokuapp.com/api/auth/signup", requestOptions)
-      .then((response) => response.json().then(data => {
-        setLoading(false);
-        if (response.ok) {
-          userRegistered();
-          history.push("/");
-        } else {
-          setError(data.message || "Une erreur s'est produite. Veuillez réessayer.");
-        }
-      }))
-      .catch((error) => {
-        setLoading(false);
-        setError("Une erreur s'est produite. Veuillez réessayer.");
-        console.error(error);
       });
+
+      setLoading(false);
+      if (response.status === 201) {
+        userRegistered();
+        history.push("/");
+      } else {
+        setError(response.data.message || "Une erreur s'est produite. Veuillez réessayer.");
+      }
+    } catch (error) {
+      setLoading(false);
+      setError("Une erreur s'est produite. Veuillez réessayer.");
+      console.error(error);
+    }
   };
 
   return (
