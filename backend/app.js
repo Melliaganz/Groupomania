@@ -17,7 +17,7 @@ app.use(helmet());
 
 // Enable CORS with specific origin and credentials
 const corsOptions = {
-  origin: 'https://groupomania-eta.vercel.app', // Your frontend URL
+  origin: process.env.CORSOPTIONS, // Your frontend URL
   credentials: true, // Allow credentials to be sent
   allowedHeaders: ['Origin', 'X-Requested-With', 'Content', 'Accept', 'Content-Type', 'Authorization'],
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
@@ -28,7 +28,7 @@ app.options('*', cors(corsOptions));
 
 app.use(cookieParser());
 app.use(session({
-  secret: 'RANDOM_TOKEN_SECRET', // Remplacez par votre clé secrète
+  secret: process.env.RTSECRET, // Remplacez par votre clé secrète
   resave: false,
   saveUninitialized: true,
   cookie: {
