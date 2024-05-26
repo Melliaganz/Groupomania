@@ -1,56 +1,47 @@
-//const User = require("../models/user");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const User = require("../models/user");
 
-// 2 hours of lock
-//const LOCK_TIME = 2 * 60 * 60 * 1000;
-// 1 minutes of lock
-const LOCK_TIME = 60 * 1000;
-//
+const LOCK_TIME = 60 * 1000; // 1 minute
+
 function comparePassword(password, userPassword, res) {
   bcrypt
     .compare(password, userPassword)
     .then((valid) => {
-      // If the password is wrong but the max connection attempt is not reached, then increment the loginAttempt by 1
       if (!valid) {
-        console.log("password invalide");
-        return res
-          .status(401)
-          .json({ error: "Mot de passe (ou email) incorrect !" });
+        console.log("Mot de passe invalide");
+        return res.status(401).json({ error: "Mot de passe (ou email) incorrect !" });
       } else {
-        console.log("Good Password");
+        console.log("Mot de passe valide");
       }
     })
     .catch((error) => res.status(500).json({ error }));
 }
 
 function checkPassword(password) {
-  // Here minimum 4 characters, at least one letter and one number
-  // This needs to be changed in production with a minimum of 8 characters and a maximum.
   const regularExp = RegExp("^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]{4,}$");
   if (regularExp.test(password)) {
-    console.log("Strong password!");
+    console.log("Mot de passe fort");
     return true;
   } else {
-    console.log("Weak password!");
+    console.log("Mot de passe faible");
     return false;
   }
 }
 
 function checkIfAccountIsLocked(userLockUntil) {
-  console.log("Dans checkIfAccountIsLock");
+  console.log("Vérification si le compte est verrouillé");
   if (userLockUntil && userLockUntil > Date.now()) {
-    console.log("check account return true");
+    console.log("Compte verrouillé");
     return true;
   } else {
-    console.log("check account return false");
+    console.log("Compte non verrouillé");
     return false;
   }
 }
 
 async function incrementLoginAttempt(emailHash, user) {
-  console.log("Dans incrementLoginAttempt");
+  console.log("Incrémentation du nombre de tentatives de connexion");
   return await user.update(
     { login_attempts: user.login_attempts + 1 },
     {
@@ -60,7 +51,7 @@ async function incrementLoginAttempt(emailHash, user) {
 }
 
 async function blockUserAccount(emailHash, user) {
-  console.log("Dans blockUserAccount");
+  console.log("Verrouillage du compte utilisateur");
   return await user.update(
     { login_attempts: user.login_attempts + 1, lock_until: Date.now() + LOCK_TIME },
     {
@@ -72,9 +63,9 @@ async function blockUserAccount(emailHash, user) {
 }
 
 async function resetUserLockAttempt(emailHash, user) {
-  console.log("Dans resetUserLockAttempt");
+  console.log("Réinitialisation des tentatives de verrouillage utilisateur");
   return await user.update(
-    { login_attempts: 0, lock_until: "NULL" },
+    { login_attempts: 0, lock_until: null },
     {
       where: {
         emailHash: emailHash,
@@ -83,7 +74,6 @@ async function resetUserLockAttempt(emailHash, user) {
   );
 }
 
-//Send token in a cookie
 function sendNewToken(userData, res) {
   const newToken = jwt.sign(
     { userId: userData.id, admin: userData.admin },
@@ -93,13 +83,13 @@ function sendNewToken(userData, res) {
 
   const cookieOptions = {
     maxAge: 2 * 60 * 60 * 1000, // 2 hours
-    httpOnly: false, // Prevent access via JavaScript
+    httpOnly: true, // Prevent access via JavaScript
     secure: process.env.NODE_ENV === 'production', // Ensure secure cookies in production
     sameSite: "None", // Allow cross-site cookies
     partitioned: true // Add partitioned attribute
   };
 
-  console.log("Envoi des cookies avec userId :", userData.id); // Log user ID
+  console.log("Envoi des cookies avec userId :", userData.id);
 
   res
     .status(200)
@@ -112,53 +102,45 @@ function sendNewToken(userData, res) {
     });
 }
 
-
-
-
-
 function getInfosUserFromToken(req, res) {
   try {
-    let userId = -1;
     const token = req.cookies.token;
+    if (!token) {
+      throw "Token non fourni";
+    }
     const decodedToken = jwt.verify(token, "RANDOM_TOKEN_SECRET");
-    let userInfos = {
-      userId :decodedToken.userId,
-      admin : decodedToken.admin
-    }
-    userId = decodedToken.userId;
-    // admin = decodedToken.admin;
-    if (userId == -1) {
-      throw "Invalid user ID";
-    } else {
-      return userInfos;
-    }
+    const userInfos = {
+      userId: decodedToken.userId,
+      admin: decodedToken.admin
+    };
+    return userInfos;
   } catch (error) {
     res.status(401).json({
-      error: new Error("Invalid request!"),
+      error: new Error("Requête invalide !"),
     });
   }
 }
 
 function isAdmin(req, res) {
   try {
-    let userId = -1;
     const token = req.cookies.token;
+    if (!token) {
+      throw "Token non fourni";
+    }
     const decodedToken = jwt.verify(token, "RANDOM_TOKEN_SECRET");
-    let isAdmin = decodedToken.admin;
-    userId = decodedToken.userId;
-    // admin = decodedToken.admin;
+    const isAdmin = decodedToken.admin;
+    const userId = decodedToken.userId;
     if (req.body.userId && req.body.userId !== userId) {
-      throw "Invalid user ID";
+      throw "Identifiant utilisateur invalide";
     } else {
       return isAdmin;
     }
   } catch (error) {
     res.status(401).json({
-      error: new Error("Invalid request!"),
+      error: new Error("Requête invalide !"),
     });
   }
 }
-
 
 function eraseCookie(res) {
   return res
@@ -169,13 +151,15 @@ function eraseCookie(res) {
     });
 }
 
-exports.checkPassword = checkPassword;
-exports.checkIfAccountIsLocked = checkIfAccountIsLocked;
-exports.sendNewToken = sendNewToken;
-exports.resetUserLockAttempt = resetUserLockAttempt;
-exports.incrementLoginAttempt = incrementLoginAttempt;
-exports.blockUserAccount = blockUserAccount;
-exports.comparePassword = comparePassword;
-exports.getInfosUserFromToken = getInfosUserFromToken;
-exports.isAdmin = isAdmin;
-exports.eraseCookie = eraseCookie;
+module.exports = {
+  checkPassword,
+  checkIfAccountIsLocked,
+  sendNewToken,
+  resetUserLockAttempt,
+  incrementLoginAttempt,
+  blockUserAccount,
+  comparePassword,
+  getInfosUserFromToken,
+  isAdmin,
+  eraseCookie
+};
