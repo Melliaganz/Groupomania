@@ -21,7 +21,7 @@ const PostMessage = ({ onPost }) => {
         content: contentValue,
       }),
     };
-    await fetch("https://groupomaniabacklucas-41ce31adf42c.herokuapp.com/messages/new", requestOptions)
+    await fetch("https://groupomaniabacklucas-41ce31adf42c.herokuapp.com/api/messages/new", requestOptions)
       .then((response) => {
         if (response.status !== 201) {
 

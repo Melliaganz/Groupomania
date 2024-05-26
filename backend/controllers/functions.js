@@ -93,16 +93,16 @@ function sendNewToken(userData, res) {
 
   const cookieOptions = {
     maxAge: 2 * 60 * 60 * 1000, // 2 hours
-    httpOnly: false,
-    secure: true, // Ensure secure cookies
-    sameSite: 'Strict' // SameSite=None for cross-site cookies
+    httpOnly: true,
+    secure: true, 
+    sameSite: null
   };
 
   res
     .status(200)
     .cookie("token", newToken, cookieOptions)
-    .cookie("groupomania", true, { ...cookieOptions, httpOnly: false })
-    .cookie("groupomaniaId", userData.id, { ...cookieOptions, httpOnly: false })
+    .cookie("groupomania", true, { ...cookieOptions, httpOnly: true })
+    .cookie("groupomaniaId", userData.id, { ...cookieOptions, httpOnly: true })
     .json({
       userId: userData.id,
       token: newToken,
