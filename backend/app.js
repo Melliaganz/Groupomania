@@ -28,7 +28,7 @@ app.options('*', cors(corsOptions));
 
 app.use(cookieParser());
 app.use(session({
-  secret: process.env.RTSECRET, // Remplacez par votre clé secrète
+  secret: 'RANDOM_TOKEN_SECRET', // Remplacez par votre clé secrète
   resave: false,
   saveUninitialized: true,
   cookie: {
