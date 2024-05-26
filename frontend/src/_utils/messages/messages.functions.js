@@ -1,4 +1,4 @@
-import api from "../api/api.service";
+import api from "../api/api";
 import { toastMessageDeleted } from "../toasts/messages";
 
 const getMessages = () => {
