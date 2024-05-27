@@ -24,23 +24,29 @@ const corsOptions = {
 };
 
 app.use(cors(corsOptions));
-app.options('*', cors(corsOptions));
+app.options('https://groupomania-eta.vercel.app', cors(corsOptions));
 
 app.use(cookieParser());
 app.use(session({
-  secret: 'RANDOM_TOKEN_SECRET', // Remplacez par votre clé secrète
+  secret: 'RANDOM_TOKEN_SECRET', // Replace with your secret key
   resave: false,
   saveUninitialized: true,
   cookie: {
-    maxAge: 24 * 60 * 60 * 1000, // 24 heures
+    maxAge: 24 * 60 * 60 * 1000, // 24 hours
     httpOnly: true,
-    secure: process.env.NODE_ENV === 'production', // Utilisez secure seulement en production
-    sameSite: 'None', // Utilisation de SameSite=None pour permettre les contextes intersites
+    secure: process.env.NODE_ENV === 'production', // Use secure only in production
+    sameSite: 'None', // Use SameSite=None to allow cross-site contexts
   }
 }));
+
+// Body parser to handle JSON and URL-encoded data
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
+
+// Serve static files from the "images" directory
 app.use('/images', express.static(path.join(__dirname, 'images')));
+
+// Protection against XSS attacks
 app.use(xss());
 
 // Prevent DOS attacks by limiting request body size
@@ -49,7 +55,7 @@ app.use(express.json({ limit: '10kb' }));
 // Routes
 app.use("/api/auth", userRoutes);
 app.use("/api/messages", messageRoutes);
-app.use('/api/messages', commentRoutes);
+app.use('/api/comments', commentRoutes); // Fix route for comments
 
 // Global error handling
 app.use((err, req, res, next) => {

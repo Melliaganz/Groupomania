@@ -7,10 +7,10 @@ import {
   logout,
 } from "../../_utils/auth/auth.functions";
 import { userDeleted } from "../../_utils/toasts/users";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const Account = ({ ...account }) => {
-  const history = useHistory();
+  const navigate = useNavigate();
 
   const onClickDeleteAccount = (e) => {
     e.preventDefault();
@@ -19,16 +19,17 @@ const Account = ({ ...account }) => {
         deleteAccount(account.id);
         userDeleted();
         account.onDeletedAccount();
-        history.push(`/account/${account.id}`);
+        navigate(`/account/${account.id}`);
       } else {
         deleteAccount(account.id);
         logout();
         userDeleted();
         account.onLogout();
-        history.push("/");
+        navigate("/");
       }
     }
   };
+
   return (
     <div className="col-11 mb-3">
       <div className="card bg-transparent">

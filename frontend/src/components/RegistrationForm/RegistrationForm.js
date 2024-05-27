@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import logo from "../../images/icon-above-font-transparent.webp";
 import { userRegistered } from "../../_utils/toasts/users";
 import { REGEX } from "../../_utils/auth/auth.functions";
@@ -13,7 +13,7 @@ const RegistrationForm = () => {
   const [surnameValue, setSurnameValue] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const history = useHistory();
+  const navigate = useNavigate();
 
   const sendData = async (e) => {
     e.preventDefault();
@@ -31,7 +31,7 @@ const RegistrationForm = () => {
       setLoading(false);
       if (response.status === 201) {
         userRegistered();
-        history.push("/");
+        navigate("/");
       } else {
         setError(response.data.message || "Une erreur s'est produite. Veuillez réessayer.");
       }

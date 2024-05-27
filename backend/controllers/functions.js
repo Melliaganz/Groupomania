@@ -4,6 +4,7 @@ const User = require("../models/user");
 
 const LOCK_TIME = 60 * 1000; // 1 minute
 
+// Fonction pour comparer les mots de passe
 function comparePassword(password, userPassword, res) {
   bcrypt
     .compare(password, userPassword)
@@ -18,6 +19,7 @@ function comparePassword(password, userPassword, res) {
     .catch((error) => res.status(500).json({ error }));
 }
 
+// Fonction pour vérifier la force du mot de passe
 function checkPassword(password) {
   const regularExp = RegExp("^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]{4,}$");
   if (regularExp.test(password)) {
@@ -29,6 +31,7 @@ function checkPassword(password) {
   }
 }
 
+// Fonction pour vérifier si le compte est verrouillé
 function checkIfAccountIsLocked(userLockUntil) {
   console.log("Vérification si le compte est verrouillé");
   if (userLockUntil && userLockUntil > Date.now()) {
@@ -40,40 +43,34 @@ function checkIfAccountIsLocked(userLockUntil) {
   }
 }
 
+// Fonction pour incrémenter le nombre de tentatives de connexion
 async function incrementLoginAttempt(emailHash, user) {
   console.log("Incrémentation du nombre de tentatives de connexion");
   return await user.update(
     { login_attempts: user.login_attempts + 1 },
-    {
-      where: { emailHash: emailHash },
-    }
+    { where: { emailHash: emailHash } }
   );
 }
 
+// Fonction pour verrouiller le compte utilisateur
 async function blockUserAccount(emailHash, user) {
   console.log("Verrouillage du compte utilisateur");
   return await user.update(
     { login_attempts: user.login_attempts + 1, lock_until: Date.now() + LOCK_TIME },
-    {
-      where: {
-        emailHash: emailHash,
-      },
-    }
+    { where: { emailHash: emailHash } }
   );
 }
 
+// Fonction pour réinitialiser les tentatives de verrouillage utilisateur
 async function resetUserLockAttempt(emailHash, user) {
   console.log("Réinitialisation des tentatives de verrouillage utilisateur");
   return await user.update(
     { login_attempts: 0, lock_until: null },
-    {
-      where: {
-        emailHash: emailHash,
-      },
-    }
+    { where: { emailHash: emailHash } }
   );
 }
 
+// Fonction pour envoyer un nouveau jeton JWT
 function sendNewToken(userData, res) {
   const newToken = jwt.sign(
     { userId: userData.id, admin: userData.admin },
@@ -82,11 +79,11 @@ function sendNewToken(userData, res) {
   );
 
   const cookieOptions = {
-    maxAge: 2 * 60 * 60 * 1000, // 2 hours
-    httpOnly: true, // Prevent access via JavaScript
-    secure: process.env.NODE_ENV === 'production', // Ensure secure cookies in production
-    sameSite: "None", // Allow cross-site cookies
-    partitioned: true // Add partitioned attribute
+    maxAge: 2 * 60 * 60 * 1000, // 2 heures
+    httpOnly: true, // Empêche l'accès via JavaScript
+    secure: process.env.NODE_ENV === 'production', // Assure des cookies sécurisés en production
+    sameSite: "None", // Autorise les cookies cross-site
+    partitioned: true // Ajoute l'attribut partitioned
   };
 
   console.log("Envoi des cookies avec userId :", userData.id);
@@ -102,6 +99,7 @@ function sendNewToken(userData, res) {
     });
 }
 
+// Fonction pour obtenir les infos utilisateur à partir du token
 function getInfosUserFromToken(req, res) {
   try {
     const token = req.cookies.token;
@@ -121,6 +119,7 @@ function getInfosUserFromToken(req, res) {
   }
 }
 
+// Fonction pour vérifier si l'utilisateur est admin
 function isAdmin(req, res) {
   try {
     const token = req.cookies.token;
@@ -142,6 +141,7 @@ function isAdmin(req, res) {
   }
 }
 
+// Fonction pour effacer les cookies
 function eraseCookie(res) {
   return res
     .status(200)

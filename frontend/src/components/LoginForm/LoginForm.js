@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import logo from "../../images/icon-above-font-transparent.webp";
 import { isLogged } from "../../_utils/auth/auth.functions";
 import { userConnected } from "../../_utils/toasts/users";
@@ -11,13 +11,13 @@ const LoginForm = ({ onLogin }) => {
   const [passwordValue, setPasswordValue] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const history = useHistory();
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (isLogged()) {
-      history.push("/");
+      navigate("/");
     }
-  }, [history]);
+  }, [navigate]);
 
   const sendData = async (e) => {
     e.preventDefault();
@@ -31,7 +31,7 @@ const LoginForm = ({ onLogin }) => {
       });
       setLoading(false);
       if (response.status === 200) {
-        history.push("/");
+        navigate("/");
         onLogin();
         userConnected();
       } else {

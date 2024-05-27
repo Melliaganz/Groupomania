@@ -1,8 +1,8 @@
 import logo from "../../images/icon.png";
-import {logout} from "../../_utils/auth/auth.functions";
-import {getIdFromCookie} from "../../_utils/auth/auth.functions";
-import { useHistory } from "react-router-dom";
-import Dropdown from 'react-bootstrap/Dropdown'
+import { logout } from "../../_utils/auth/auth.functions";
+import { getIdFromCookie } from "../../_utils/auth/auth.functions";
+import { useNavigate } from "react-router-dom";
+import Dropdown from 'react-bootstrap/Dropdown';
 import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
 import MenuIcon from '@mui/icons-material/Menu';
 import PersonIcon from '@mui/icons-material/Person';
@@ -11,13 +11,13 @@ import ChatIcon from '@mui/icons-material/Chat';
 
 const LoggedHeader = ({ onLogout }) => {
   const idFromCookie = getIdFromCookie();
-  const history = useHistory();
+  const navigate = useNavigate();
 
   const onClickLogout = (e) => {
     e.preventDefault();
     logout();
     onLogout();
-    history.push("/");
+    navigate("/");
   };
 
   return (
@@ -28,18 +28,18 @@ const LoggedHeader = ({ onLogout }) => {
         </a>
 
         <div>
-        <Dropdown>
-  <Dropdown.Toggle variant="success" id="dropdown-basic">
-    <MenuIcon /> Menu
-  </Dropdown.Toggle>
+          <Dropdown>
+            <Dropdown.Toggle variant="success" id="dropdown-basic">
+              <MenuIcon /> Menu
+            </Dropdown.Toggle>
 
-  <Dropdown.Menu>
-  <Dropdown.Item href= "/" > <ChatIcon /> Fil d'actualité</Dropdown.Item>
-    <Dropdown.Item href={"/account/" + idFromCookie}>  <PersonIcon /> Mon Compte</Dropdown.Item>
-    <Dropdown.Item href={"/account/" + idFromCookie + "/edit/"} > <ManageAccountsIcon /> Modifier Profil  </Dropdown.Item>
-    <Dropdown.Item href="/login" onClick={onClickLogout} > <LogoutIcon />Se Deconnecter</Dropdown.Item>
-  </Dropdown.Menu>
-</Dropdown>
+            <Dropdown.Menu>
+              <Dropdown.Item href="/"> <ChatIcon /> Fil d'actualité</Dropdown.Item>
+              <Dropdown.Item href={"/account/" + idFromCookie}> <PersonIcon /> Mon Compte</Dropdown.Item>
+              <Dropdown.Item href={"/account/" + idFromCookie + "/edit/"}> <ManageAccountsIcon /> Modifier Profil </Dropdown.Item>
+              <Dropdown.Item href="/login" onClick={onClickLogout}> <LogoutIcon />Se Deconnecter</Dropdown.Item>
+            </Dropdown.Menu>
+          </Dropdown>
         </div>
       </nav>
     </header>
