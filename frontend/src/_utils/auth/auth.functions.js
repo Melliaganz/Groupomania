@@ -16,13 +16,16 @@ function getEmailFromCrypto(email) {
 }
 
 function isLogged() {
+  const allCookies = Cookies.get();
+  console.log("All Cookies:", allCookies);
   const loggedIn = Cookies.get("groupomania");
-  console.log("Logged in ?",loggedIn)
+  console.log("Logged in?", loggedIn);
   return loggedIn === "true";
 }
 
 function getIdFromCookie() {
   const groupomaniaId = Cookies.get("groupomaniaId");
+  console.log("Groupomania ID:", groupomaniaId);
   return groupomaniaId || false;
 }
 
