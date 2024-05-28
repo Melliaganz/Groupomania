@@ -12,7 +12,7 @@ import InfiniteScroll from "react-infinite-scroll-component";
 import PostMessage from "./PostMessage";
 import PostComment from "./PostComment";
 
-const MessageContainer = ({ ...params }) => {
+const MessageContainer = ({ messageQuery, postMessage }) => {
   const [error, setError] = useState(null);
   const [isLoaded, setIsLoaded] = useState(false);
   const [messages, setMessages] = useState([]);
@@ -22,44 +22,30 @@ const MessageContainer = ({ ...params }) => {
   const [refetch, setRefetch] = useState(0);
 
   const fetchMessage = useCallback(() => {
-    if (params.messageQuery === "getMessages") {
-      getMessages(page)
-        .then((response) => {
-          const result = response.data;
-          setMessages((prevMessages) => [...prevMessages, ...result.messages]);
-          setTotalItems(result.totalItems);
-          console.log(result);
-          setIsLoaded(true);
-        })
-        .catch((error) => {
-          setError(error.response ? error.response.status : error.message);
-          setIsLoaded(true);
-        });
-    } else if (params.messageQuery === "getOneMessage") {
-      getOneMessage(id)
-        .then((response) => {
-          setMessages(response.data);
-          setIsLoaded(true);
-        })
-        .catch((error) => {
-          setError(error.response ? error.response.status : error.message);
-          setIsLoaded(true);
-        });
-    } else if (params.messageQuery === "getAllUserMessages") {
-      getAllUserMessages(id, page)
-        .then((response) => {
-          const result = response.data;
-          setMessages((prevMessages) => [...prevMessages, ...result.messages]);
-          setTotalItems(result.totalItems);
-          console.log(result);
-          setIsLoaded(true);
-        })
-        .catch((error) => {
-          setError(error.response ? error.response.status : error.message);
-          setIsLoaded(true);
-        });
-    }
-  }, [params.messageQuery, page, id]);
+    setIsLoaded(false);
+    setError(null);
+    
+    const fetchFunction = {
+      getMessages: () => getMessages(page),
+      getOneMessage: () => getOneMessage(id),
+      getAllUserMessages: () => getAllUserMessages(id, page)
+    }[messageQuery];
+
+    fetchFunction()
+      .then((response) => {
+        if (messageQuery === "getOneMessage") {
+          setMessages([response]);
+        } else {
+          setMessages((prevMessages) => [...prevMessages, ...response.messages]);
+          setTotalItems(response.totalItems);
+        }
+        setIsLoaded(true);
+      })
+      .catch((error) => {
+        setError(error.response ? error.response.status : error.message);
+        setIsLoaded(true);
+      });
+  }, [messageQuery, page, id]);
 
   useEffect(() => {
     fetchMessage();
@@ -83,46 +69,40 @@ const MessageContainer = ({ ...params }) => {
   };
 
   if (error && error === 404) {
-    return (
-      <div>
-        <NoMessageFound />
-      </div>
-    );
+    return <NoMessageFound />;
   } else if (error) {
     return <div>Erreur : {error}</div>;
   } else if (!isLoaded) {
     return <div>Chargement...</div>;
-  } else if (messages && params.messageQuery === "getOneMessage") {
+  } else if (messages && messageQuery === "getOneMessage") {
     return (
-      <React.Fragment>
-        <section className="row justify-content-center  ">
-          <div className="col-12 mb-3  ">
-            <Message {...messages} onErase={handleErase} />
-          </div>
-          <div><PostComment onPost={handleCommentPost} /></div>
-        </section>
-      </React.Fragment>
+      <section className="row justify-content-center">
+        <div className="col-12 mb-3">
+          <Message {...messages[0]} onErase={handleErase} />
+        </div>
+        <div>
+          <PostComment onPost={handleCommentPost} />
+        </div>
+      </section>
     );
   } else if (
     messages &&
     messages.length > 0 &&
-    (params.messageQuery === "getAllUserMessages" || params.messageQuery === "getMessages")
+    (messageQuery === "getAllUserMessages" || messageQuery === "getMessages")
   ) {
     return (
       <React.Fragment>
-        {params.postMessage ? <PostMessage onPost={handlePost} /> : null}
+        {postMessage && <PostMessage onPost={handlePost} />}
         <InfiniteScroll
           dataLength={messages.length}
           next={() => setPage((prevPage) => prevPage + 1)}
           hasMore={messages.length < totalItems}
         >
-          <section className="row justify-content-center ">
+          <section className="row justify-content-center">
             {messages.map((message) => (
-              <React.Fragment key={message.id}>
-                <FadeIn className="col-11 mb-3" transitionDuration={2000}>
-                  <Message {...message} teaserMessage={true} />
-                </FadeIn>
-              </React.Fragment>
+              <FadeIn key={message.id} className="col-11 mb-3" transitionDuration={2000}>
+                <Message {...message} teaserMessage={true} />
+              </FadeIn>
             ))}
           </section>
         </InfiniteScroll>
@@ -131,8 +111,10 @@ const MessageContainer = ({ ...params }) => {
   } else {
     return (
       <React.Fragment>
-        {params.postMessage ? <PostMessage onPost={handlePost} /> : null}
-        <div className="text-center"><NoMessageFound /></div>
+        {postMessage && <PostMessage onPost={handlePost} />}
+        <div className="text-center">
+          <NoMessageFound />
+        </div>
       </React.Fragment>
     );
   }
