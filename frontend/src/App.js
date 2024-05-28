@@ -14,7 +14,6 @@ import useMediaQuery from '@mui/material/useMediaQuery';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import MessagesCommentsContainer from "./components/Messages/MessagesCommentsContainer";
-import CookieConsentement from "./components/CookieConsent/CookieConsentement";
 
 const App = () => {
   const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)');
@@ -58,16 +57,6 @@ const App = () => {
       />
       <ThemeProvider theme={theme}>
         <CssBaseline />
-        <CookieConsentement
-          location="bottom"
-          buttonText="Accepter"
-          cookieName="CookieConsent"
-          style={{ background: "#fd2d01" }}
-          buttonStyle={{ background: "black", color: "white", fontSize: "13px" }}
-          expires={150}
-        >
-          Cette application utilise des cookies pour améliorer l'expérience utilisateur.
-        </CookieConsentement>
         {isLoggedIn ? <LoggedHeader onLogout={handleLogout} /> : <Header />}
         <main className="container-fluid">
           <Routes>

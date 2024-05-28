@@ -4,7 +4,7 @@ import logo from "../../images/icon-above-font-transparent.webp";
 import { isLogged } from "../../_utils/auth/auth.functions";
 import { userConnected } from "../../_utils/toasts/users";
 import LoginIcon from '@mui/icons-material/Login';
-import api from '../../_utils/api/api'; // Importez l'instance d'axios configurée
+import api from '../../_utils/api/api'; // Import the configured axios instance
 
 const LoginForm = ({ onLogin }) => {
   const [emailValue, setEmailValue] = useState("");
@@ -31,6 +31,11 @@ const LoginForm = ({ onLogin }) => {
       });
       setLoading(false);
       if (response.status === 200) {
+        // Store token and user information in local storage
+        localStorage.setItem('token', response.data.token);
+        localStorage.setItem('groupomania', 'true');
+        localStorage.setItem('groupomaniaId', response.data.userId);
+
         navigate("/");
         onLogin();
         userConnected();
