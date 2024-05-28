@@ -16,15 +16,15 @@ function getEmailFromCrypto(email) {
 }
 
 function isLogged() {
+  // Définir les cookies manuellement
+document.cookie = "groupomania=true; path=/; secure; samesite=none";
+document.cookie = "groupomaniaId=1; path=/; secure; samesite=none";
   const loggedIn = Cookies.get("groupomania");
   console.log("groupomania cookie value:", loggedIn); // Ajoutez ce log pour déboguer
   console.log(Cookies.get)
   console.log('Cookies via js-cookie:', Cookies.get());
 
 // Vérification individuelle des cookies
-// Définir les cookies manuellement
-document.cookie = "groupomania=true; path=/; secure; samesite=none";
-document.cookie = "groupomaniaId=1; path=/; secure; samesite=none";
 
 // Lire les cookies via document.cookie
 console.log('Document cookies:', document.cookie);
