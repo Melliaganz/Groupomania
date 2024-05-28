@@ -1,4 +1,4 @@
-import api from "../api/api.service";
+import api from "../api/api";
 import Cookies from "js-cookie";
 import { userLogout } from "../toasts/users";
 const CryptoJS = require("crypto-js");

@@ -1,4 +1,4 @@
-import api from "../api/api.service";
+import api from "../api/api";
 
 const getMessageAllComments = (messageId) => {
   return api.get(`messages/${messageId}/comments`);
