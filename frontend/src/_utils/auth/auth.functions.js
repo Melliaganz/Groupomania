@@ -40,7 +40,7 @@ const logout = async () => {
   removeCookie("token");
 
   try {
-    const response = await api.post("auth/logout");
+    const response = await api.post("auth/logout", {}, { withCredentials: true });
     if (response.status === 200) {
       userLogout();
     } else {
@@ -53,12 +53,12 @@ const logout = async () => {
 
 // Fonction pour obtenir les informations de compte
 const getAccount = (accountId) => {
-  return api.get(`auth/account/${accountId}`);
+  return api.get(`auth/account/${accountId}`, { withCredentials: true });
 };
 
 // Fonction pour supprimer le compte utilisateur
 const deleteAccount = (accountId) => {
-  return api.delete(`auth/account/${accountId}`);
+  return api.delete(`auth/account/${accountId}`, { withCredentials: true });
 };
 
 // Ajout de logs pour le débogage après un délai pour s'assurer que les cookies sont bien chargés
