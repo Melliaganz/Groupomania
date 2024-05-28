@@ -1,0 +1,14 @@
+{
+  "files": {
+    "main.css": "/static/css/main.b5daa23f.css",
+    "main.js": "/static/js/main.9a395c8f.js",
+    "static/media/icon-above-font-transparent.webp": "/static/media/icon-above-font-transparent.2bdfc417553a128e331d.webp",
+    "index.html": "/index.html",
+    "main.b5daa23f.css.map": "/static/css/main.b5daa23f.css.map",
+    "main.9a395c8f.js.map": "/static/js/main.9a395c8f.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.b5daa23f.css",
+    "static/js/main.9a395c8f.js"
+  ]
+}
