@@ -25,6 +25,7 @@ function isLogged() {
   const loggedIn = getCookie("groupomania");
   console.log("groupomania cookie value:", loggedIn); // Ajoutez ce log pour déboguer
   console.log("Document cookies: ", document.cookie);
+  console.log("test", getCookie("CookieConsent"))
 
   return loggedIn === "true";
 }
