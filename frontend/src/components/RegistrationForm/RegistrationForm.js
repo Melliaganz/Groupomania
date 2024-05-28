@@ -4,7 +4,7 @@ import logo from "../../images/icon-above-font-transparent.webp";
 import { userRegistered } from "../../_utils/toasts/users";
 import { REGEX } from "../../_utils/auth/auth.functions";
 import SaveAltIcon from '@mui/icons-material/SaveAlt';
-import api from "../../_utils/api/api"; // Importez l'instance d'axios configurée
+import api from "../../_utils/api/api"; // Import the configured axios instance
 
 const RegistrationForm = () => {
   const [emailValue, setEmailValue] = useState("");
@@ -30,6 +30,11 @@ const RegistrationForm = () => {
 
       setLoading(false);
       if (response.status === 201) {
+        // Store token and user information in local storage
+        localStorage.setItem('token', response.data.token);
+        localStorage.setItem('groupomania', 'true');
+        localStorage.setItem('groupomaniaId', response.data.userId);
+
         userRegistered();
         navigate("/");
       } else {
