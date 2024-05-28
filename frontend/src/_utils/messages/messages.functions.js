@@ -1,16 +1,31 @@
 import api from "../api/api";
 import { toastMessageDeleted } from "../toasts/messages";
 
-const getMessages = () => {
-  return api.get('messages');
+const getMessages = async () => {
+  try {
+    const response = await api.get('messages');
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching messages:", error);
+  }
 };
 
-const getAllUserMessages = (userId) => {
-  return api.get(`messages/userMessages/${userId}`);
+const getAllUserMessages = async (userId) => {
+  try {
+    const response = await api.get(`messages/userMessages/${userId}`);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching user messages:", error);
+  }
 };
 
-const getOneMessage = (messageId) => {
-  return api.get(`messages/${messageId}`);
+const getOneMessage = async (messageId) => {
+  try {
+    const response = await api.get(`messages/${messageId}`);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching message:", error);
+  }
 };
 
 const deleteOneMessage = async (messageId) => {

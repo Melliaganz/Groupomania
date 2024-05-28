@@ -2,7 +2,7 @@ const express = require("express");
 const cors = require("cors");
 const bodyParser = require("body-parser");
 const helmet = require("helmet");
-const xss = require("xss-clean");
+const xss = require("xss-clean")
 const path = require('path');
 const userRoutes = require("./routes/user");
 const messageRoutes = require("./routes/message");
@@ -23,7 +23,7 @@ const corsOptions = {
 };
 
 app.use(cors(corsOptions));
-app.options('https://groupomania-eta.vercel.app', cors(corsOptions));
+app.options('*', cors(corsOptions));
 
 // Body parser to handle JSON and URL-encoded data
 app.use(bodyParser.urlencoded({ extended: true }));

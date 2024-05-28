@@ -3,6 +3,45 @@ const bcrypt = require('bcrypt');
 const cryptoJS = require("crypto-js");
 const functions = require("./functions");
 const models = require("../models");
+const fs = require('fs');
+
+exports.signup = (req, res, next) => {
+  let name = req.body.name;
+  let surname = req.body.surname;
+  let password = req.body.password;
+  let emailHash = cryptoJS.MD5(req.body.email).toString();
+  let emailEncrypted = cryptoJS.AES.encrypt(req.body.email, "Secret Passphrase").toString();
+
+  if (!name || !surname || !password || !req.body.email) {
+    return res.status(400).json({ error: "Missing parameters" });
+  }
+
+  models.User.findOne({ where: { emailHash: emailHash } })
+    .then((user) => {
+      if (!user) {
+        bcrypt.hash(password, 10)
+          .then((hash) => {
+            const newUser = models.User.create({
+              name: name,
+              surname: surname,
+              email: emailEncrypted,
+              emailHash: emailHash,
+              password: hash,
+            });
+            const token = jwt.sign({ userId: newUser.id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+            res.status(201).json({
+              userId: newUser.id,
+              token: token,
+              message: "User created successfully",
+            });
+          })
+          .catch((error) => res.status(500).json({ error }));
+      } else {
+        return res.status(409).json({ error: "Email already used" });
+      }
+    })
+    .catch((error) => res.status(500).json({ error: "Unable to verify user" }));
+};
 
 exports.login = (req, res, next) => {
   let emailHash = cryptoJS.MD5(req.body.email).toString();
@@ -120,5 +159,45 @@ exports.updateUserProfile = (req, res, next) => {
     })
     .catch((error) => {
       res.status(500).json({ error: "Erreur" });
+    });
+};
+
+exports.deleteUserProfile = (req, res) => {
+  let userInfos = functions.getInfosUserFromToken(req, res);
+  let CurrentUserId = req.params.id;
+  
+  if (userInfos.userId < 0) {
+    return res.status(400).json({ error: "Wrong token" });
+  }
+
+  models.User.findOne({
+    where: { id: CurrentUserId },
+    attributes: ["id", "name", "surname", "email", "createdAt", "imageUrl"],
+  })
+    .then((user) => {
+      if ((user && user.id === userInfos.userId) || userInfos.admin === true) {
+        if (user.imageUrl != null) {
+          const filename = user.imageUrl.split("/images/")[1];
+          fs.unlink(`./images/${filename}`, (err) => {
+            if (err) {
+              console.log(err);
+            }
+          });
+        }
+
+        models.User.destroy({
+          where: { id: CurrentUserId },
+        })
+          .then(() => {
+            console.log("User deleted");
+            res.status(200).json({ message: "User deleted!" });
+          })
+          .catch((error) => res.status(400).json({ error }));
+      } else {
+        res.status(403).json({ error: "Not authorized" });
+      }
+    })
+    .catch((error) => {
+      res.status(404).json({ error: "User not found" });
     });
 };
