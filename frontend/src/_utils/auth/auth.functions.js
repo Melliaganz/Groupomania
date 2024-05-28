@@ -21,6 +21,11 @@ function isLogged() {
   document.cookie = "groupomaniaId=1; path=/; secure; samesite=none";
   document.cookie = "sessionId=XeGNxlnyTpm4L_UdMRlulDs7crLS-cFh; path=/; secure; samesite=none";
   document.cookie = "token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImFkbWluIjpmYWxzZSwiaWF0IjoxNzE2ODk1ODUyLCJleHAiOjE3MTY5MDMwNTJ9.b5ektn1bEC02vrCQPraqPjFxmhEHb-RiyGuCaJP0SYQ; path=/; secure; samesite=none";
+  const loggedIn = Cookies.get("groupomania");
+  console.log("groupomania cookie value:", loggedIn); // Ajoutez ce log pour déboguer
+  console.log(Cookies.get)
+  console.log('Cookies via js-cookie:', Cookies.get());
+ 
   
   // Lire les cookies via document.cookie
   console.log('Document cookies:', document.cookie);
@@ -33,6 +38,7 @@ function isLogged() {
   console.log('groupomaniaId:', Cookies.get('groupomaniaId'));
   console.log('sessionId:', Cookies.get('sessionId'));
   console.log('token:', Cookies.get('token'));
+
   return loggedIn === "true";
 }
 
