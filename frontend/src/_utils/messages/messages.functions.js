@@ -6,7 +6,7 @@ const getMessages = async () => {
     const response = await api.get('messages');
     return response.data;
   } catch (error) {
-    console.error("Error fetching messages:", error);
+    console.error("Error fetching messages:", error.response ? error.response.data : error.message);
   }
 };
 
@@ -15,7 +15,7 @@ const getAllUserMessages = async (userId) => {
     const response = await api.get(`messages/userMessages/${userId}`);
     return response.data;
   } catch (error) {
-    console.error("Error fetching user messages:", error);
+    console.error("Error fetching user messages:", error.response ? error.response.data : error.message);
   }
 };
 
@@ -24,7 +24,7 @@ const getOneMessage = async (messageId) => {
     const response = await api.get(`messages/${messageId}`);
     return response.data;
   } catch (error) {
-    console.error("Error fetching message:", error);
+    console.error("Error fetching message:", error.response ? error.response.data : error.message);
   }
 };
 
@@ -33,7 +33,7 @@ const deleteOneMessage = async (messageId) => {
     await api.delete(`messages/${messageId}`);
     toastMessageDeleted();
   } catch (error) {
-    console.error("Error deleting message:", error);
+    console.error("Error deleting message:", error.response ? error.response.data : error.message);
   }
 };
 
