@@ -1,10 +1,22 @@
 import axios from 'axios';
 
-// Créez une instance d'axios avec la configuration de base
+// Create an instance of axios
 const api = axios.create({
-  baseURL: 'https://groupomaniabacklucas-41ce31adf42c.herokuapp.com/api', // URL de base de votre API
-  withCredentials: true, // Inclure les credentials dans toutes les requêtes
+  baseURL: process.env.REACT_APP_API_URL,
+  headers: {
+    'Content-Type': 'application/json',
+  },
 });
 
-// Exportez l'instance configurée pour une utilisation dans toute l'application
+// Add a request interceptor to include the token
+api.interceptors.request.use((config) => {
+  const token = localStorage.getItem('token');
+  if (token) {
+    config.headers['Authorization'] = `Bearer ${token}`;
+  }
+  return config;
+}, (error) => {
+  return Promise.reject(error);
+});
+
 export default api;
