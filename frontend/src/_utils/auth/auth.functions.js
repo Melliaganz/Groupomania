@@ -14,24 +14,16 @@ function getEmailFromCrypto(email) {
   let DecryptedEmail = CryptoJS.AES.decrypt(email, "Secret Passphrase").toString(CryptoJS.enc.Utf8);
   return DecryptedEmail;
 }
-function getCookie(name) {
-  const value = `; ${document.cookie}`;
-  const parts = value.split(`; ${name}=`);
-  if (parts.length === 2) return parts.pop().split(';').shift();
-}
-console.log("Document cookies: ", document.cookie);
 
 function isLogged() {
-  const loggedIn = getCookie("groupomania");
+  const loggedIn = Cookies.get("groupomania");
   console.log("groupomania cookie value:", loggedIn); // Ajoutez ce log pour déboguer
-  console.log("Document cookies: ", document.cookie);
-  console.log("test", getCookie("CookieConsent"))
-
+  console.log(Cookies.get())
   return loggedIn === "true";
 }
 
 function getIdFromCookie() {
-  const groupomaniaId = getCookie("groupomaniaId");
+  const groupomaniaId = Cookies.get("groupomaniaId");
   console.log("groupomaniaId cookie value:", groupomaniaId); // Ajoutez ce log pour déboguer
   return groupomaniaId || false;
 }
