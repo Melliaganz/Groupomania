@@ -27,7 +27,7 @@ function isLogged() {
 }
 
 function getIdFromCookie() {
-  const groupomaniaId = getIdFromCookie("groupomaniaId");
+  const groupomaniaId = Cookies.get("groupomaniaId");
   return groupomaniaId || false;
 }
 
