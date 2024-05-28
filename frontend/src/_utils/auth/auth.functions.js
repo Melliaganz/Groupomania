@@ -17,7 +17,7 @@ function getEmailFromCrypto(email) {
 
 function isLogged() {
   const loggedIn = Cookies.get("groupomania");
-  return loggedIn === "true";
+  return true;
 }
 
 function getIdFromCookie() {
