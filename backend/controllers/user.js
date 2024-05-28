@@ -96,7 +96,7 @@ exports.login = (req, res, next) => {
         } else {
           req.session.userId = user.id;
           res.cookie('sessionId', req.sessionID, {
-            httpOnly: true,
+            
             secure: process.env.NODE_ENV === 'production',
             maxAge: 24 * 60 * 60 * 1000,
             partitioned: true,

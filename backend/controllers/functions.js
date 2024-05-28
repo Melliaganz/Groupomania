@@ -80,7 +80,7 @@ function sendNewToken(userData, res) {
 
   const cookieOptions = {
     maxAge: 2 * 60 * 60 * 1000, // 2 heures
-    httpOnly: true, // Empêche l'accès via JavaScript
+     // Empêche l'accès via JavaScript
     secure: process.env.NODE_ENV === 'production', // Assure des cookies sécurisés en production
     sameSite: "None", // Autorise les cookies cross-site
     partitioned: true // Ajoute l'attribut partitioned
@@ -91,14 +91,13 @@ function sendNewToken(userData, res) {
   res
     .status(200)
     .cookie("token", newToken, cookieOptions)
-    .cookie("groupomania", true, { ...cookieOptions, httpOnly: false })
-    .cookie("groupomaniaId", userData.id, { ...cookieOptions, httpOnly: false })
+    .cookie("groupomania", true, { ...cookieOptions,  })
+    .cookie("groupomaniaId", userData.id, { ...cookieOptions,  })
     .json({
       userId: userData.id,
       token: newToken,
     });
 }
-
 // Fonction pour obtenir les infos utilisateur à partir du token
 function getInfosUserFromToken(req, res) {
   try {
