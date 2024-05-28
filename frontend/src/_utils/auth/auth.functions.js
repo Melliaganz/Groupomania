@@ -14,12 +14,10 @@ function getEmailFromCrypto(email) {
   let DecryptedEmail = CryptoJS.AES.decrypt(email, "Secret Passphrase").toString(CryptoJS.enc.Utf8);
   return DecryptedEmail;
 }
+
+// Utilitaires pour les cookies
 const getCookieValue = (name) => Cookies.get(name);
 const removeCookie = (name) => Cookies.remove(name, { path: '/' });
-
-// Utilisation
-console.log('groupomania:', getCookieValue('groupomania'));
-removeCookie('groupomania');
 
 function isLogged() {
   const loggedIn = getCookieValue('groupomania') === 'true';
@@ -32,14 +30,16 @@ function isLogged() {
 }
 
 function getIdFromCookie() {
-  const groupomaniaId = Cookies.get("groupomaniaId");
-  console.log("groupomaniaId cookie value:", groupomaniaId); // Ajoutez ce log pour déboguer
+  const groupomaniaId = getCookieValue("groupomaniaId");
+  console.log("groupomaniaId cookie value:", groupomaniaId);
   return groupomaniaId || false;
 }
 
 const logout = async (page) => {
-  Cookies.remove("groupomania");
-  Cookies.remove("groupomaniaId");
+  removeCookie("groupomania");
+  removeCookie("groupomaniaId");
+  removeCookie("sessionId");
+  removeCookie("token");
 
   try {
     const response = await api.post("auth/logout");
@@ -60,6 +60,19 @@ const getAccount = (accountId, page) => {
 const deleteAccount = (accountId, page) => {
   return api.delete(`auth/account/${accountId}`);
 };
+
+// Ajout de logs pour le débogage
+setTimeout(() => {
+  console.log('Document cookies:', document.cookie);
+  console.log('Cookies via js-cookie:', Cookies.get());
+  console.log('groupomania:', getCookieValue('groupomania'));
+  console.log('groupomaniaId:', getCookieValue('groupomaniaId'));
+  console.log('sessionId:', getCookieValue('sessionId'));
+  console.log('token:', getCookieValue('token'));
+
+  console.log('isLogged:', isLogged());
+  console.log('getIdFromCookie:', getIdFromCookie());
+}, 1000);
 
 export {
   getEmailFromCrypto,
