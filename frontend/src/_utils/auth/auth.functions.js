@@ -18,7 +18,17 @@ function getEmailFromCrypto(email) {
 function isLogged() {
   const loggedIn = Cookies.get("groupomania");
   console.log("groupomania cookie value:", loggedIn); // Ajoutez ce log pour déboguer
-  console.log(Cookies.get())
+  console.log(Cookies.get)
+  console.log('Cookies via js-cookie:', Cookies.get());
+
+// Vérification individuelle des cookies
+console.log('groupomania:', Cookies.get('groupomania'));
+console.log('groupomaniaId:', Cookies.get('groupomaniaId'));
+console.log('sessionId:', Cookies.get('sessionId'));
+console.log('token:', Cookies.get('token'));
+
+// Vérification des cookies via document.cookie
+console.log('Document cookies:', document.cookie);
   return loggedIn === "true";
 }
 
