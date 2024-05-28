@@ -2,7 +2,7 @@ import axios from 'axios';
 
 // Create an instance of axios
 const api = axios.create({
-  baseURL: process.env.REACT_APP_API_URL,
+  baseURL: 'https://groupomaniabacklucas-41ce31adf42c.herokuapp.com', // Backend URL
   headers: {
     'Content-Type': 'application/json',
   },
