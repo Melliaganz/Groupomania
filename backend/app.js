@@ -1,14 +1,13 @@
 const express = require("express");
+const cors = require("cors");
 const bodyParser = require("body-parser");
-const cookieParser = require("cookie-parser");
+const helmet = require("helmet");
+const xss = require("xss-clean");
+const path = require('path');
 const userRoutes = require("./routes/user");
 const messageRoutes = require("./routes/message");
 const commentRoutes = require('./routes/comment');
-const cors = require('cors');
-const path = require('path');
-const helmet = require('helmet');
-const xss = require('xss-clean');
-const session = require('express-session');
+require('dotenv').config();
 
 const app = express();
 
@@ -26,18 +25,6 @@ const corsOptions = {
 app.use(cors(corsOptions));
 app.options('https://groupomania-eta.vercel.app', cors(corsOptions));
 
-app.use(cookieParser());
-app.use(session({
-  secret: 'RANDOM_TOKEN_SECRET', // Replace with your secret key
-  resave: false,
-  saveUninitialized: true,
-  cookie: {
-    maxAge: 24 * 60 * 60 * 1000, // 24 hours
-    secure: process.env.NODE_ENV === 'production',
-    sameSite: 'None', 
-  }
-}));
-
 // Body parser to handle JSON and URL-encoded data
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
@@ -54,7 +41,7 @@ app.use(express.json({ limit: '10kb' }));
 // Routes
 app.use("/api/auth", userRoutes);
 app.use("/api/messages", messageRoutes);
-app.use('/api/comments', commentRoutes); // Fix route for comments
+app.use('/api/comments', commentRoutes);
 
 // Global error handling
 app.use((err, req, res, next) => {

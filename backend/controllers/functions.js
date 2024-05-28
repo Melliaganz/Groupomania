@@ -1,10 +1,10 @@
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const User = require("../models/user");
+require('dotenv').config();
 
 const LOCK_TIME = 60 * 1000; // 1 minute
 
-// Fonction pour comparer les mots de passe
 function comparePassword(password, userPassword, res) {
   bcrypt
     .compare(password, userPassword)
@@ -19,7 +19,6 @@ function comparePassword(password, userPassword, res) {
     .catch((error) => res.status(500).json({ error }));
 }
 
-// Fonction pour vérifier la force du mot de passe
 function checkPassword(password) {
   const regularExp = RegExp("^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]{4,}$");
   if (regularExp.test(password)) {
@@ -31,7 +30,6 @@ function checkPassword(password) {
   }
 }
 
-// Fonction pour vérifier si le compte est verrouillé
 function checkIfAccountIsLocked(userLockUntil) {
   console.log("Vérification si le compte est verrouillé");
   if (userLockUntil && userLockUntil > Date.now()) {
@@ -43,7 +41,6 @@ function checkIfAccountIsLocked(userLockUntil) {
   }
 }
 
-// Fonction pour incrémenter le nombre de tentatives de connexion
 async function incrementLoginAttempt(emailHash, user) {
   console.log("Incrémentation du nombre de tentatives de connexion");
   return await user.update(
@@ -52,7 +49,6 @@ async function incrementLoginAttempt(emailHash, user) {
   );
 }
 
-// Fonction pour verrouiller le compte utilisateur
 async function blockUserAccount(emailHash, user) {
   console.log("Verrouillage du compte utilisateur");
   return await user.update(
@@ -61,7 +57,6 @@ async function blockUserAccount(emailHash, user) {
   );
 }
 
-// Fonction pour réinitialiser les tentatives de verrouillage utilisateur
 async function resetUserLockAttempt(emailHash, user) {
   console.log("Réinitialisation des tentatives de verrouillage utilisateur");
   return await user.update(
@@ -70,84 +65,61 @@ async function resetUserLockAttempt(emailHash, user) {
   );
 }
 
-// Fonction pour envoyer un nouveau jeton JWT
 function sendNewToken(userData, res) {
+  const jwtSecret = process.env.JWT_SECRET;
+
   const newToken = jwt.sign(
     { userId: userData.id, admin: userData.admin },
-    "RANDOM_TOKEN_SECRET",
+    jwtSecret,
     { expiresIn: "2h" }
   );
 
-  const cookieOptions = {
-    maxAge: 2 * 60 * 60 * 1000, // 2 heures
-     // Empêche l'accès via JavaScript
-    secure: process.env.NODE_ENV === 'production', // Assure des cookies sécurisés en production
-    sameSite: "None", // Autorise les cookies cross-site
-    partitioned: true // Ajoute l'attribut partitioned
-  };
+  console.log("Sending new token for userId:", userData.id);
 
-  console.log("Envoi des cookies avec userId :", userData.id);
-
-  res
-    .status(200)
-    .cookie("token", newToken, cookieOptions)
-    .cookie("groupomania", true, { ...cookieOptions,  })
-    .cookie("groupomaniaId", userData.id, { ...cookieOptions,  })
-    .json({
-      userId: userData.id,
-      token: newToken,
-    });
+  res.status(200).json({
+    userId: userData.id,
+    token: newToken,
+  });
 }
-// Fonction pour obtenir les infos utilisateur à partir du token
+
 function getInfosUserFromToken(req, res) {
   try {
-    const token = req.cookies.token;
+    const token = req.header('Authorization');
     if (!token) {
-      throw "Token non fourni";
+      throw "Token not provided";
     }
-    const decodedToken = jwt.verify(token, "RANDOM_TOKEN_SECRET");
+    const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
     const userInfos = {
       userId: decodedToken.userId,
-      admin: decodedToken.admin
+      admin: decodedToken.admin,
     };
     return userInfos;
   } catch (error) {
     res.status(401).json({
-      error: new Error("Requête invalide !"),
+      error: new Error("Invalid request!"),
     });
   }
 }
 
-// Fonction pour vérifier si l'utilisateur est admin
 function isAdmin(req, res) {
   try {
-    const token = req.cookies.token;
+    const token = req.header('Authorization');
     if (!token) {
-      throw "Token non fourni";
+      throw "Token not provided";
     }
-    const decodedToken = jwt.verify(token, "RANDOM_TOKEN_SECRET");
+    const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
     const isAdmin = decodedToken.admin;
     const userId = decodedToken.userId;
     if (req.body.userId && req.body.userId !== userId) {
-      throw "Identifiant utilisateur invalide";
+      throw "Invalid user ID";
     } else {
       return isAdmin;
     }
   } catch (error) {
     res.status(401).json({
-      error: new Error("Requête invalide !"),
+      error: new Error("Invalid request!"),
     });
   }
-}
-
-// Fonction pour effacer les cookies
-function eraseCookie(res) {
-  return res
-    .status(200)
-    .cookie("token", "", { expires: new Date(0) })
-    .json({
-      message: "Utilisateur déconnecté",
-    });
 }
 
 module.exports = {
@@ -160,5 +132,4 @@ module.exports = {
   comparePassword,
   getInfosUserFromToken,
   isAdmin,
-  eraseCookie
 };

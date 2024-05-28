@@ -2,21 +2,16 @@ const jwt = require('jsonwebtoken');
 
 module.exports = (req, res, next) => {
   try {
-    const token = req.cookies.token;
+    const token = req.header('Authorization');
     if (!token) {
-      throw 'No token found';
+      return res.status(403).json({ error: 'No token found' });
     }
-    const decodedToken = jwt.verify(token, 'RANDOM_TOKEN_SECRET');
-    const userId = decodedToken.userId;
-    if (req.body.userId && req.body.userId !== userId) {
-      throw 'Invalid user ID';
-    } else {
-      req.auth = { userId }; // Ajoute l'userId à l'objet req pour utilisation ultérieure
-      next();
-    }
+    const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
+    req.auth = { userId: decodedToken.userId };
+    next();
   } catch (error) {
     res.status(401).json({
-      error: new Error('Invalid request!')
+      error: 'Invalid request!'
     });
   }
 };
