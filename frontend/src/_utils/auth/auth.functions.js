@@ -22,13 +22,22 @@ function isLogged() {
   console.log('Cookies via js-cookie:', Cookies.get());
 
 // Vérification individuelle des cookies
+// Définir les cookies manuellement
+document.cookie = "groupomania=true; path=/; secure; samesite=none";
+document.cookie = "groupomaniaId=1; path=/; secure; samesite=none";
+
+// Lire les cookies via document.cookie
+console.log('Document cookies:', document.cookie);
+
+// Lire les cookies via js-cookie
+console.log('Cookies via js-cookie:', Cookies.get());
+
+// Lire les cookies individuellement via js-cookie
 console.log('groupomania:', Cookies.get('groupomania'));
 console.log('groupomaniaId:', Cookies.get('groupomaniaId'));
 console.log('sessionId:', Cookies.get('sessionId'));
 console.log('token:', Cookies.get('token'));
 
-// Vérification des cookies via document.cookie
-console.log('Document cookies:', document.cookie);
   return loggedIn === "true";
 }
 
