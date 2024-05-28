@@ -20,6 +20,8 @@ function getCookie(name) {
   if (parts.length === 2) return parts.pop().split(';').shift();
   return null;
 }
+console.log("Document cookies: ", document.cookie);
+
 function isLogged() {
   const loggedIn = getCookie("groupomania");
   console.log("groupomania cookie value:", loggedIn); // Ajoutez ce log pour déboguer
