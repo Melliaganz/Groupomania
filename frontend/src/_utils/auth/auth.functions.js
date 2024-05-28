@@ -14,6 +14,12 @@ function getEmailFromCrypto(email) {
   let DecryptedEmail = CryptoJS.AES.decrypt(email, "Secret Passphrase").toString(CryptoJS.enc.Utf8);
   return DecryptedEmail;
 }
+const getCookieValue = (name) => Cookies.get(name);
+const removeCookie = (name) => Cookies.remove(name, { path: '/' });
+
+// Utilisation
+console.log('groupomania:', getCookieValue('groupomania'));
+removeCookie('groupomania');
 
 function isLogged() {
   const loggedIn = getCookieValue('groupomania') === 'true';
