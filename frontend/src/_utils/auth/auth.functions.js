@@ -17,7 +17,7 @@ function getEmailFromCrypto(email) {
 
 function isLogged() {
   const loggedIn = Cookies.get("groupomania");
-  console.log("groupomania cookie value:", loggedIn); // Ajoutez ce log pour déboguer
+  console.log("groupomania cookie value:", loggedIn, Cookies.withAttributes); // Ajoutez ce log pour déboguer
   return loggedIn === "true";
 }
 
