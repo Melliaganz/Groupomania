@@ -1,5 +1,5 @@
 import "./App.css";
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 import Header from "./components/Header/Header";
 import LoggedHeader from "./components/Header/LoggedHeader";
@@ -30,6 +30,10 @@ const App = () => {
   );
 
   const [isLoggedIn, setIsLoggedIn] = useState(isLogged());
+
+  useEffect(() => {
+    setIsLoggedIn(isLogged());
+  }, []);
 
   const handleLogout = () => {
     setIsLoggedIn(false);
