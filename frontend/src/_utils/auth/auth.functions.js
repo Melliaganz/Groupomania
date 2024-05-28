@@ -9,33 +9,31 @@ const REGEX = {
   PASSWORD_REGEX: "^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]{4,}$",
 };
 
-// Fonction pour décrypter l'email
+// Function to decrypt email
 function getEmailFromCrypto(email) {
   return CryptoJS.AES.decrypt(email, "Secret Passphrase").toString(CryptoJS.enc.Utf8);
 }
 
-// Utilitaires pour localStorage
+// Utility functions for localStorage
 const getLocalStorageValue = (key) => localStorage.getItem(key);
 const removeLocalStorageItem = (key) => localStorage.removeItem(key);
 
-// Fonction pour vérifier si l'utilisateur est connecté
+// Function to check if user is logged in
 function isLogged() {
   const loggedIn = getLocalStorageValue('groupomania') === 'true';
-  const sessionId = getLocalStorageValue('sessionId');
   const token = getLocalStorageValue('token');
-  return loggedIn && sessionId && token;
+  return loggedIn && !!token;
 }
 
-// Fonction pour récupérer l'ID utilisateur à partir de localStorage
+// Function to get user ID from localStorage
 function getIdFromLocalStorage() {
   return getLocalStorageValue("groupomaniaId") || false;
 }
 
-// Fonction de déconnexion
+// Logout function
 const logout = async () => {
   removeLocalStorageItem("groupomania");
   removeLocalStorageItem("groupomaniaId");
-  removeLocalStorageItem("sessionId");
   removeLocalStorageItem("token");
 
   try {
@@ -50,22 +48,21 @@ const logout = async () => {
   }
 };
 
-// Fonction pour obtenir les informations de compte
+// Function to get account information
 const getAccount = (accountId) => {
   return api.get(`auth/account/${accountId}`);
 };
 
-// Fonction pour supprimer le compte utilisateur
+// Function to delete user account
 const deleteAccount = (accountId) => {
   return api.delete(`auth/account/${accountId}`);
 };
 
-// Ajout de logs pour le débogage après un délai pour s'assurer que les valeurs sont bien chargées
+// Debug logs to verify localStorage values
 setTimeout(() => {
   console.log('LocalStorage values:');
   console.log('groupomania:', getLocalStorageValue('groupomania'));
   console.log('groupomaniaId:', getLocalStorageValue('groupomaniaId'));
-  console.log('sessionId:', getLocalStorageValue('sessionId'));
   console.log('token:', getLocalStorageValue('token'));
 
   console.log('isLogged:', isLogged());

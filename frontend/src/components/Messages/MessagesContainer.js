@@ -24,11 +24,11 @@ const MessageContainer = ({ messageQuery, postMessage }) => {
   const fetchMessage = useCallback(() => {
     setIsLoaded(false);
     setError(null);
-    
+
     const fetchFunction = {
       getMessages: () => getMessages(page),
       getOneMessage: () => getOneMessage(id),
-      getAllUserMessages: () => getAllUserMessages(id, page)
+      getAllUserMessages: () => getAllUserMessages(id, page),
     }[messageQuery];
 
     fetchFunction()
