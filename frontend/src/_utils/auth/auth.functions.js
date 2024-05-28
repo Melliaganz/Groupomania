@@ -16,30 +16,13 @@ function getEmailFromCrypto(email) {
 }
 
 function isLogged() {
-  // Définir les cookies manuellement
-  document.cookie = "groupomania=true; path=/; secure; samesite=none";
-  document.cookie = "groupomaniaId=1; path=/; secure; samesite=none";
-  document.cookie = "sessionId=XeGNxlnyTpm4L_UdMRlulDs7crLS-cFh; path=/; secure; samesite=none";
-  document.cookie = "token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImFkbWluIjpmYWxzZSwiaWF0IjoxNzE2ODk1ODUyLCJleHAiOjE3MTY5MDMwNTJ9.b5ektn1bEC02vrCQPraqPjFxmhEHb-RiyGuCaJP0SYQ; path=/; secure; samesite=none";
-  const loggedIn = Cookies.get("groupomania");
-  console.log("groupomania cookie value:", loggedIn); // Ajoutez ce log pour déboguer
-  console.log(Cookies.get)
-  console.log('Cookies via js-cookie:', Cookies.get());
- 
-  
-  // Lire les cookies via document.cookie
-  console.log('Document cookies:', document.cookie);
-  
-  // Lire les cookies via js-cookie
-  console.log('Cookies via js-cookie:', Cookies.get());
-  
-  // Lire les cookies individuellement via js-cookie
-  console.log('groupomania:', Cookies.get('groupomania'));
-  console.log('groupomaniaId:', Cookies.get('groupomaniaId'));
-  console.log('sessionId:', Cookies.get('sessionId'));
-  console.log('token:', Cookies.get('token'));
-
-  return loggedIn === "true";
+  const loggedIn = getCookieValue('groupomania') === 'true';
+  const sessionId = getCookieValue('sessionId');
+  const token = getCookieValue('token');
+  console.log('groupomania cookie value:', loggedIn);
+  console.log('sessionId cookie value:', sessionId);
+  console.log('token cookie value:', token);
+  return loggedIn && sessionId && token;
 }
 
 function getIdFromCookie() {
