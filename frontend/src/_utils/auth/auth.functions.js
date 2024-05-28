@@ -27,12 +27,6 @@ function getIdFromCookie() {
   return groupomaniaId || false;
 }
 
-
-function getIdFromCookie() {
-  const groupomaniaId = Cookies.get("groupomaniaId");
-  return groupomaniaId || false;
-}
-
 const logout = async (page) => {
   Cookies.remove("groupomania");
   Cookies.remove("groupomaniaId");
