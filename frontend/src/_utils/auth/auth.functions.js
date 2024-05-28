@@ -10,32 +10,30 @@ const REGEX = {
   PASSWORD_REGEX: "^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]{4,}$",
 };
 
+// Fonction pour décrypter l'email
 function getEmailFromCrypto(email) {
-  let DecryptedEmail = CryptoJS.AES.decrypt(email, "Secret Passphrase").toString(CryptoJS.enc.Utf8);
-  return DecryptedEmail;
+  return CryptoJS.AES.decrypt(email, "Secret Passphrase").toString(CryptoJS.enc.Utf8);
 }
 
 // Utilitaires pour les cookies
 const getCookieValue = (name) => Cookies.get(name);
 const removeCookie = (name) => Cookies.remove(name, { path: '/' });
 
+// Fonction pour vérifier si l'utilisateur est connecté
 function isLogged() {
   const loggedIn = getCookieValue('groupomania') === 'true';
   const sessionId = getCookieValue('sessionId');
   const token = getCookieValue('token');
-  console.log('groupomania cookie value:', loggedIn);
-  console.log('sessionId cookie value:', sessionId);
-  console.log('token cookie value:', token);
   return loggedIn && sessionId && token;
 }
 
+// Fonction pour récupérer l'ID utilisateur à partir des cookies
 function getIdFromCookie() {
-  const groupomaniaId = getCookieValue("groupomaniaId");
-  console.log("groupomaniaId cookie value:", groupomaniaId);
-  return groupomaniaId || false;
+  return getCookieValue("groupomaniaId") || false;
 }
 
-const logout = async (page) => {
+// Fonction de déconnexion
+const logout = async () => {
   removeCookie("groupomania");
   removeCookie("groupomaniaId");
   removeCookie("sessionId");
@@ -53,15 +51,17 @@ const logout = async (page) => {
   }
 };
 
-const getAccount = (accountId, page) => {
+// Fonction pour obtenir les informations de compte
+const getAccount = (accountId) => {
   return api.get(`auth/account/${accountId}`);
 };
 
-const deleteAccount = (accountId, page) => {
+// Fonction pour supprimer le compte utilisateur
+const deleteAccount = (accountId) => {
   return api.delete(`auth/account/${accountId}`);
 };
 
-// Ajout de logs pour le débogage
+// Ajout de logs pour le débogage après un délai pour s'assurer que les cookies sont bien chargés
 setTimeout(() => {
   console.log('Document cookies:', document.cookie);
   console.log('Cookies via js-cookie:', Cookies.get());
