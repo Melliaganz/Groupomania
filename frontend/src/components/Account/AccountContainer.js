@@ -16,15 +16,14 @@ const AccountContainer = ({ editor, onLogout }) => {
   const fetchAccount = useCallback(async () => {
     try {
       const res = await getAccount(id);
-      if (res.ok) {
-        const result = await res.json();
+      if (res.status === 200) {
+        const result = res.data;
         setAccount(result);
         setError(null);
       } else if (res.status === 404) {
         setError("User not found (404)");
       } else {
-        const errorText = await res.text(); // Get the text error message from the response
-        setError(`Error: ${res.status} - ${errorText}`);
+        setError(`Error: ${res.status} - ${res.statusText}`);
       }
     } catch (error) {
       setError(`Error: ${error.message}`);
