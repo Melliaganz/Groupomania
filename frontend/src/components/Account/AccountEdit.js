@@ -1,49 +1,48 @@
 import React, { useState } from "react";
 import { useParams } from "react-router-dom";
+import axios from 'axios';
 import { getEmailFromCrypto, REGEX } from "../../_utils/auth/auth.functions";
 import { userModified } from "../../_utils/toasts/users";
 import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
 
 const EditAccount = ({ ...account }) => {
   const { id } = useParams();
-  const [emailValue, setEmailValue] = useState(
-    getEmailFromCrypto(account.email)
-  );
+  const [emailValue, setEmailValue] = useState(getEmailFromCrypto(account.email));
   const [firstnameValue, setFirstnameValue] = useState(account.name);
   const [surnameValue, setSurnameValue] = useState(account.surname);
-  const [imageUrlValue, setImageUrlValue] = useState (account.imageUrl);
-  const [files, setFiles] = useState(false);
+  const [imageUrlValue, setImageUrlValue] = useState(account.imageUrl);
+  const [files, setFiles] = useState(null);
 
   const handleChange = (e) => {
-    setImageUrlValue(URL.createObjectURL(e.target.files[0]))
-    setFiles(e.target.files[0])
-    
+    setImageUrlValue(URL.createObjectURL(e.target.files[0]));
+    setFiles(e.target.files[0]);
   };
 
-  const SendData = (e) => {
+  const SendData = async (e) => {
     e.preventDefault();
     const data = new FormData();
     data.append("image", files);
-    data.append("name", firstnameValue)
+    data.append("name", firstnameValue);
     data.append("surname", surnameValue);
-    const requestOptions = {
-      method: "PUT",
-      accept: "*/*",
-      headers: { "encType": "application/x-www-form-urlencoded" }, 
-      credentials: "include",
-      body: data,
-    };
-    console.log(data);
-    fetch(`https://groupomaniabacklucas-41ce31adf42c.herokuapp.com/auth/account/${id}`, requestOptions)
-      .then((response) => {
-        console.log(data);
-        if (response.ok) {
-          userModified();
-          account.onPost();
-        }
-      })
-      .catch((error) => console.log(error));
+
+    try {
+      const response = await axios.put(`https://groupomaniabacklucas-41ce31adf42c.herokuapp.com/api/auth/account/${id}`, data, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          'Accept': '*/*'
+        },
+        withCredentials: true
+      });
+
+      if (response.status === 200) {
+        userModified();
+        account.onPost();
+      }
+    } catch (error) {
+      console.log("Error updating account:", error);
+    }
   };
+
   return (
     <div className="col-11 mb-3">
       <div className="card bg-transparent">
@@ -61,7 +60,7 @@ const EditAccount = ({ ...account }) => {
         <div className="card-body">
           <h2 className="h5 card-title text-center">Modifier le profil</h2>
 
-          <form onSubmit={SendData} encType="application/x-www-form-urlencoded">
+          <form onSubmit={SendData} encType="multipart/form-data">
             <div className="form-group">
               <label htmlFor="nom">Nom</label>
               <input
@@ -100,39 +99,24 @@ const EditAccount = ({ ...account }) => {
                 aria-describedby="emailHelp"
                 placeholder="Enter email"
                 value={emailValue}
-                readOnly={true}
-                onChange={(event) => setEmailValue(event.target.value)}
+                readOnly
               />
             </div>
             <div className="form-group">
               <label htmlFor="inputButton"></label>
               <input
-              accept="image/*"
-              className="mt-4"
-              id="select-image"
-              name="image"
-              type="file"
-              onChange={e => handleChange(e)}
-              multiple={false}
+                accept="image/*"
+                className="mt-4"
+                id="select-image"
+                name="image"
+                type="file"
+                onChange={handleChange}
+                multiple={false}
               />
               <p>
                 <img src={imageUrlValue} alt="" className="Preview" />
               </p>
             </div>
-            {/* <div className="form-group">
-              <label htmlFor="password">Password</label>
-              <input
-                id="password"
-                name="password"
-                type="password"
-                className="form-control"
-                placeholder="Password"
-                pattern={REGEX.PASSWORD_REGEX}
-                title="Minimum de 4 lettres et 1 chiffre"
-                value={passwordValue}
-                onChange={(event) => setPasswordValue(event.target.value)}
-              />
-            </div> */}
             <button type="submit" className="btn btn-primary">
               <ManageAccountsIcon /> Modifier 
             </button>
