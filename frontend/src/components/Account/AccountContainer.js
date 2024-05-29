@@ -16,9 +16,10 @@ const AccountContainer = (params) => {
   const fetchAccount = async () => {
     try {
       const res = await getAccount(id);
-      if (res.status === 200) {
+      if (res.ok) { // Check if response is ok (status is in the range 200-299)
         const result = await res.json();
         setAccount(result);
+        setError(null); // Clear any previous error
       } else if (res.status === 404) {
         setError(404);
       } else {
