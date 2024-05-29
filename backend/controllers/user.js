@@ -5,113 +5,79 @@ const functions = require("./functions");
 const models = require("../models");
 const fs = require('fs');
 
-exports.signup = (req, res, next) => {
-  let name = req.body.name;
-  let surname = req.body.surname;
-  let password = req.body.password;
-  let emailHash = cryptoJS.MD5(req.body.email).toString();
-  let emailEncrypted = cryptoJS.AES.encrypt(req.body.email, "Secret Passphrase").toString();
-  let imageUrl = "https://freeimghost.net/images/2022/05/25/icon1653051982534.webp";
-
-  if (!name || !surname || !password || !req.body.email) {
+exports.signup = async (req, res, next) => {
+  const { name, surname, password, email } = req.body;
+  if (!name || !surname || !password || !email) {
     return res.status(400).json({ error: "Missing parameters" });
   }
 
-  models.User.findOne({ where: { emailHash: emailHash } })
-    .then((user) => {
-      if (!user) {
-        bcrypt.hash(password, 10)
-          .then((hash) => {
-            const newUser = models.User.create({
-              name: name,
-              surname: surname,
-              email: emailEncrypted,
-              emailHash: emailHash,
-              password: hash,
-              imageUrl: imageUrl,
-            });
-            const token = jwt.sign({ userId: newUser.id }, process.env.JWT_SECRET, { expiresIn: '1h' });
-            res.status(201).json({
-              userId: newUser.id,
-              token: token,
-              message: "User created successfully",
-            });
-          })
-          .catch((error) => res.status(500).json({ error }));
-      } else {
-        return res.status(409).json({ error: "Email already used" });
-      }
-    })
-    .catch((error) => res.status(500).json({ error: "Unable to verify user" }));
+  const emailHash = cryptoJS.MD5(email).toString();
+  const emailEncrypted = cryptoJS.AES.encrypt(email, "Secret Passphrase").toString();
+  const imageUrl = "https://freeimghost.net/images/2022/05/25/icon1653051982534.webp";
+
+  try {
+    const existingUser = await models.User.findOne({ where: { emailHash } });
+    if (existingUser) {
+      return res.status(409).json({ error: "Email already used" });
+    }
+
+    const hash = await bcrypt.hash(password, 10);
+    const newUser = await models.User.create({
+      name,
+      surname,
+      email: emailEncrypted,
+      emailHash,
+      password: hash,
+      imageUrl,
+    });
+
+    const token = jwt.sign({ userId: newUser.id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+    res.status(201).json({
+      userId: newUser.id,
+      token,
+      message: "User created successfully",
+    });
+  } catch (error) {
+    res.status(500).json({ error: "Unable to create user" });
+  }
 };
 
-exports.login = (req, res, next) => {
-  let emailHash = cryptoJS.MD5(req.body.email).toString();
-  let password = req.body.password;
+exports.login = async (req, res, next) => {
+  const { email, password } = req.body;
+  const emailHash = cryptoJS.MD5(email).toString();
 
-  if (emailHash == null || password == null) {
+  if (!emailHash || !password) {
     return res.status(400).json({ error: "Missing parameters" });
   }
 
-  models.User.findOne({ where: { emailHash: emailHash } })
-    .then((user) => {
-      if (!user) {
-        return res.status(401).json({ error: "Nom d'utilisateur (ou mot de passe) incorrect" });
-      }
+  try {
+    const user = await models.User.findOne({ where: { emailHash } });
+    if (!user) {
+      return res.status(401).json({ error: "Incorrect username or password" });
+    }
 
-      bcrypt.compare(req.body.password, user.password).then((valid) => {
-        if (!valid) {
-          functions.incrementLoginAttempt(emailHash, user).catch((error) => console.log({ error }));
-          return res.status(401).json({ error: "Mot de passe (ou email) incorrect !" });
-        } else {
-          const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET, { expiresIn: '1h' });
-          res.status(200).json({
-            userId: user.id,
-            token: token,
-            message: 'Logged in successfully',
-          });
-        }
-      }).catch((error) => res.status(500).json({ error }));
-    })
-    .catch((error) => res.status(500).json({ error }));
+    const valid = await bcrypt.compare(password, user.password);
+    if (!valid) {
+      await functions.incrementLoginAttempt(emailHash, user);
+      return res.status(401).json({ error: "Incorrect email or password" });
+    }
+
+    const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+    res.status(200).json({
+      userId: user.id,
+      token,
+      message: 'Logged in successfully',
+    });
+  } catch (error) {
+    res.status(500).json({ error: "Unable to log in" });
+  }
 };
 
 exports.logout = (req, res, next) => {
   res.status(200).json({ message: 'Logged out successfully!' });
 };
 
-exports.getUserProfile = (req, res, next) => {
-  let userInfos = functions.getInfosUserFromToken(req, res);
-  let CurrentUserId = req.params.id;
-
-  if (userInfos.userId < 0) {
-    return res.status(400).json({ error: "Wrong token" });
-  }
-
-  models.User.findOne({
-    attributes: ["id", "name", "surname", "email", "createdAt", "imageUrl"],
-    where: { id: CurrentUserId },
-  })
-    .then((user) => {
-      if (!user) {
-        res.status(404).json({ error: "User not found" });
-      }
-      if ((user && user.id === userInfos.userId) || userInfos.admin === true) {
-        user.dataValues.canEdit = true;
-        if (userInfos.admin === true) {
-          user.dataValues.isAdmin = true;
-        }
-        res.status(200).json(user);
-      } else {
-        res.status(200).json(user);
-      }
-    })
-    .catch((error) => {
-      res.status(500).json({ error: "Cannot fetch user" });
-    });
-};
-
-exports.updateUserProfile = (req, res, next) => {
+exports.getUserProfile = async (req, res, next) => {
   const userInfos = functions.getInfosUserFromToken(req, res);
   const CurrentUserId = req.params.id;
 
@@ -119,87 +85,119 @@ exports.updateUserProfile = (req, res, next) => {
     return res.status(400).json({ error: "Wrong token" });
   }
 
-  let name = req.body.name;
-  let surname = req.body.surname;
-  let imageUrl = req.body && req.file ? `${req.protocol}://${req.get('host')}/images/${req.file.filename}` : null;
-
-  models.User.findOne({
-    attributes: ["id", "name", "surname", "imageUrl"],
-    where: { id: CurrentUserId },
-  })
-    .then((user) => {
-      if (!user) {
-        res.status(404).json({ error: "User not found" });
-      }
-      if (user.imageUrl != null) {
-        const filename = user.imageUrl.split("/images/")[1];
-        fs.unlink(`images/${filename}`, (err) => {
-          if (err) {
-            console.log("impossible de supprimer l'image " + err);
-          } else {
-            console.log("image supprimée")
-          }
-        });
-      }
-      if ((user && user.id === userInfos.userId) || userInfos.admin === true)  {
-        user
-          .update({
-            name: (name ? name : user.name),
-            surname: (surname ? surname : user.surname),
-            imageUrl: (imageUrl ? imageUrl : user.imageUrl),
-          })
-          .then((updated) => {
-            if (updated) {
-              res.status(201).json("Profile mis à jour");
-            } else {
-              res.status(500).json({ error: "Cannot update profile" });
-            }
-          });
-      } else {
-        res.status(400).json({ error: "User not found" });
-      }
-    })
-    .catch((error) => {
-      res.status(500).json({ error: "Erreur" });
+  try {
+    const user = await models.User.findOne({
+      attributes: ["id", "name", "surname", "email", "createdAt", "imageUrl"],
+      where: { id: CurrentUserId },
     });
+
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    const canEdit = (user.id === userInfos.userId || userInfos.admin);
+    const response = {
+      ...user.dataValues,
+      canEdit,
+      isAdmin: userInfos.admin || false,
+    };
+
+    res.status(200).json(response);
+  } catch (error) {
+    res.status(500).json({ error: "Cannot fetch user" });
+  }
 };
 
-exports.deleteUserProfile = (req, res) => {
-  let userInfos = functions.getInfosUserFromToken(req, res);
-  let CurrentUserId = req.params.id;
-  
+exports.updateUserProfile = async (req, res, next) => {
+  const userInfos = functions.getInfosUserFromToken(req, res);
+  const CurrentUserId = req.params.id;
+
   if (userInfos.userId < 0) {
     return res.status(400).json({ error: "Wrong token" });
   }
 
-  models.User.findOne({
-    where: { id: CurrentUserId },
-    attributes: ["id", "name", "surname", "email", "createdAt", "imageUrl"],
-  })
-    .then((user) => {
-      if ((user && user.id === userInfos.userId) || userInfos.admin === true) {
-        if (user.imageUrl != null) {
-          const filename = user.imageUrl.split("/images/")[1];
-          fs.unlink(`./images/${filename}`, (err) => {
-            if (err) {
-              console.log(err);
-            }
-          });
-        }
+  const { name, surname } = req.body;
+  const imageUrl = req.file ? `${req.protocol}://${req.get('host')}/images/${req.file.filename}` : null;
 
-        models.User.destroy({
-          where: { id: CurrentUserId },
-        })
-          .then(() => {
-            console.log("User deleted");
-            res.status(200).json({ message: "User deleted!" });
-          })
-          .catch((error) => res.status(400).json({ error }));
-      } else {
-        res.status(403).json({ error: "Not authorized" });
-      }
-    })
-    .catch((error) => {
-      res.status(404).json({ error: "User not found" });
+  try {
+    const user = await models.User.findOne({
+      attributes: ["id", "name", "surname", "imageUrl"],
+      where: { id: CurrentUserId },
     });
+
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    if (user.imageUrl) {
+      const filename = user.imageUrl.split("/images/")[1];
+      fs.unlink(`images/${filename}`, (err) => {
+        if (err) {
+          console.log("Impossible to delete image: " + err);
+        } else {
+          console.log("Image deleted");
+        }
+      });
+    }
+
+    if (user.id === userInfos.userId || userInfos.admin) {
+      const updatedUser = await user.update({
+        name: name || user.name,
+        surname: surname || user.surname,
+        imageUrl: imageUrl || user.imageUrl,
+      });
+
+      if (updatedUser) {
+        res.status(201).json("Profile updated");
+      } else {
+        res.status(500).json({ error: "Cannot update profile" });
+      }
+    } else {
+      res.status(403).json({ error: "Not authorized" });
+    }
+  } catch (error) {
+    res.status(500).json({ error: "Error updating profile" });
+  }
+};
+
+exports.deleteUserProfile = async (req, res) => {
+  const userInfos = functions.getInfosUserFromToken(req, res);
+  const CurrentUserId = req.params.id;
+
+  if (userInfos.userId < 0) {
+    return res.status(400).json({ error: "Wrong token" });
+  }
+
+  try {
+    const user = await models.User.findOne({
+      where: { id: CurrentUserId },
+      attributes: ["id", "name", "surname", "email", "createdAt", "imageUrl"],
+    });
+
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    if (user.id === userInfos.userId || userInfos.admin) {
+      if (user.imageUrl) {
+        const filename = user.imageUrl.split("/images/")[1];
+        fs.unlink(`./images/${filename}`, (err) => {
+          if (err) {
+            console.log(err);
+          }
+        });
+      }
+
+      await models.User.destroy({
+        where: { id: CurrentUserId },
+      });
+
+      console.log("User deleted");
+      res.status(200).json({ message: "User deleted!" });
+    } else {
+      res.status(403).json({ error: "Not authorized" });
+    }
+  } catch (error) {
+    res.status(500).json({ error: "Error deleting user" });
+  }
 };

@@ -9,53 +9,58 @@ import { NoUserFound } from "../Infos/NotFound";
 const AccountContainer = (params) => {
   const [error, setError] = useState(null);
   const [isLoaded, setIsLoaded] = useState(false);
-  const [account, setAccount] = useState(null); // Use null instead of empty array
+  const [account, setAccount] = useState([]);
   const { id } = useParams();
   const [refetch, setRefetch] = useState(false);
 
-  const fetchAccount = async () => {
-    try {
-      const res = await getAccount(id);
-      if (res.ok) { // Check if response is ok (status is in the range 200-299)
-        const result = await res.json();
-        setAccount(result);
-        setError(null); // Clear any previous error
-      } else if (res.status === 404) {
-        setError(404);
-      } else {
-        setError(res.statusText);
+  async function fetchAccount() {
+    getAccount(id).then(
+      (res) => {
+        if (res.status === 200) {
+          res.json().then((result) => {
+            setAccount(result);
+            setIsLoaded(true);
+          });
+        } else if (res.status === 404) {
+          setError(404);
+          setIsLoaded(true);
+        } else {
+          setError(res.statusText);
+          setIsLoaded(true);
+        }
+      },
+      (error) => {
+        setError(error);
+        setIsLoaded(true);
       }
-    } catch (error) {
-      setError(error.message);
-    } finally {
-      setIsLoaded(true);
-    }
-  };
+    );
+  }
 
   useEffect(() => {
     fetchAccount();
-  }, [refetch, id]); // Add id as a dependency
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [refetch]);
 
   const handlePost = () => {
     fetchAccount();
   };
 
   const handlerDeletedAccount = () => {
-    setAccount(null); // Set account to null
+    setAccount((account) => account = []);
     setIsLoaded(false);
-    setRefetch((prev) => !prev); // Toggle refetch to true or false
+    setRefetch(true);
   };
 
-  if (error === 404) {
+  if (error && error === 404) {
     return (
       <div>
         <NoUserFound />
       </div>
     );
   } else if (error) {
-    return <div>Error: {error}</div>;
+    return <div>Erreur : {error}</div>;
   } else if (!isLoaded) {
-    return <div>Loading...</div>;
+    return <div>Chargement...</div>;
   } else {
     return (
       account && (
@@ -78,5 +83,4 @@ const AccountContainer = (params) => {
     );
   }
 };
-
 export default AccountContainer;
