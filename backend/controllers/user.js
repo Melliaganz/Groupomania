@@ -42,11 +42,12 @@ exports.signup = async (req, res, next) => {
   }
 };
 
+
 exports.login = async (req, res, next) => {
   const { email, password } = req.body;
   const emailHash = cryptoJS.MD5(email).toString();
 
-  if (!emailHash || !password) {
+  if (!email || !password) {
     return res.status(400).json({ error: "Missing parameters" });
   }
 
@@ -72,6 +73,7 @@ exports.login = async (req, res, next) => {
     res.status(500).json({ error: "Unable to log in" });
   }
 };
+
 
 exports.logout = (req, res, next) => {
   res.status(200).json({ message: 'Logged out successfully!' });

@@ -34,7 +34,7 @@ const AccountContainer = (params) => {
 
   useEffect(() => {
     fetchAccount();
-  }, [refetch, id]); // Add id as a dependency
+  }, [refetch, id, fetchAccount]); // Add id as a dependency
 
   const handlePost = () => {
     fetchAccount();
