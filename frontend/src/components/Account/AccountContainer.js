@@ -1,25 +1,25 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
+import { useParams } from "react-router-dom";
 import Account from "./Account";
 import AccountEdit from "./AccountEdit";
 import AccountMessagesContainer from "./AccountMessagesContainer";
-import { useParams } from "react-router-dom";
 import { getAccount } from "../../_utils/auth/auth.functions";
 import { NoUserFound } from "../Infos/NotFound";
 
-const AccountContainer = (params) => {
+const AccountContainer = ({ editor, onLogout }) => {
   const [error, setError] = useState(null);
   const [isLoaded, setIsLoaded] = useState(false);
-  const [account, setAccount] = useState(null); // Use null instead of empty array
+  const [account, setAccount] = useState(null);
   const { id } = useParams();
   const [refetch, setRefetch] = useState(false);
 
-  const fetchAccount = async () => {
+  const fetchAccount = useCallback(async () => {
     try {
       const res = await getAccount(id);
-      if (res.ok) { // Check if response is ok (status is in the range 200-299)
+      if (res.ok) {
         const result = await res.json();
         setAccount(result);
-        setError(null); // Clear any previous error
+        setError(null);
       } else if (res.status === 404) {
         setError(404);
       } else {
@@ -30,53 +30,52 @@ const AccountContainer = (params) => {
     } finally {
       setIsLoaded(true);
     }
-  };
+  }, [id]);
 
   useEffect(() => {
     fetchAccount();
-  }, [refetch, id, fetchAccount]); // Add id as a dependency
+  }, [fetchAccount, refetch, id]);
 
   const handlePost = () => {
     fetchAccount();
   };
 
-  const handlerDeletedAccount = () => {
-    setAccount(null); // Set account to null
+  const handleDeletedAccount = () => {
+    setAccount(null);
     setIsLoaded(false);
-    setRefetch((prev) => !prev); // Toggle refetch to true or false
+    setRefetch((prev) => !prev);
   };
 
-  if (error === 404) {
-    return (
-      <div>
-        <NoUserFound />
-      </div>
-    );
-  } else if (error) {
-    return <div>Error: {error}</div>;
-  } else if (!isLoaded) {
+  if (!isLoaded) {
     return <div>Loading...</div>;
-  } else {
-    return (
-      account && (
-        <React.Fragment>
-          <section className="row justify-content-center">
-            {!params.editor ? (
-              <Account
-                {...account}
-                onLogout={params.onLogout}
-                onDeletedAccount={handlerDeletedAccount}
-              />
-            ) : null}
-            {params.editor ? (
-              <AccountEdit {...account} onPost={handlePost} />
-            ) : null}
-          </section>
-          {!params.editor ? <AccountMessagesContainer /> : null}
-        </React.Fragment>
-      )
-    );
   }
+
+  if (error === 404) {
+    return <NoUserFound />;
+  }
+
+  if (error) {
+    return <div>Error: {error}</div>;
+  }
+
+  return (
+    account && (
+      <React.Fragment>
+        <section className="row justify-content-center">
+          {!editor ? (
+            <Account
+              {...account}
+              onLogout={onLogout}
+              onDeletedAccount={handleDeletedAccount}
+            />
+          ) : (
+            <AccountEdit {...account} onPost={handlePost} />
+          )}
+        </section>
+        {!editor && <AccountMessagesContainer />}
+      </React.Fragment>
+    )
+  );
 };
 
 export default AccountContainer;
