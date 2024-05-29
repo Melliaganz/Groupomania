@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useParams } from "react-router-dom";
-import axios from 'axios';
+import api from '../../api/api'; // Import the Axios instance
 import { getEmailFromCrypto, REGEX } from "../../_utils/auth/auth.functions";
 import { userModified } from "../../_utils/toasts/users";
 import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
@@ -26,12 +26,10 @@ const EditAccount = ({ ...account }) => {
     data.append("surname", surnameValue);
 
     try {
-      const response = await axios.put(`https://groupomaniabacklucas-41ce31adf42c.herokuapp.com/api/auth/account/${id}`, data, {
+      const response = await api.put(`/auth/account/${id}`, data, {
         headers: {
           'Content-Type': 'multipart/form-data',
-          'Accept': '*/*'
         },
-        withCredentials: true
       });
 
       if (response.status === 200) {
@@ -39,7 +37,7 @@ const EditAccount = ({ ...account }) => {
         account.onPost();
       }
     } catch (error) {
-      console.log("Error updating account:", error);
+      console.error("Error updating account:", error);
     }
   };
 
@@ -51,7 +49,7 @@ const EditAccount = ({ ...account }) => {
             <div className="justify-content-between align-items-center">
               <div className="ml-2">
                 <img src={account.imageUrl} alt="" className="profilePic"/>
-                <div className="h5 m-0">@{account.name }</div>
+                <div className="h5 m-0">@{account.name}</div>
                 <div className="h7 text-muted">{account.name} {account.surname}</div>
               </div>
             </div>
