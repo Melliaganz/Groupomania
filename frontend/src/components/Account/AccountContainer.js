@@ -21,12 +21,13 @@ const AccountContainer = ({ editor, onLogout }) => {
         setAccount(result);
         setError(null);
       } else if (res.status === 404) {
-        setError(404);
+        setError("User not found (404)");
       } else {
-        setError(res.statusText);
+        const errorText = await res.text(); // Get the text error message from the response
+        setError(`Error: ${res.status} - ${errorText}`);
       }
     } catch (error) {
-      setError(error.message);
+      setError(`Error: ${error.message}`);
     } finally {
       setIsLoaded(true);
     }
@@ -50,12 +51,12 @@ const AccountContainer = ({ editor, onLogout }) => {
     return <div>Loading...</div>;
   }
 
-  if (error === 404) {
+  if (error === "User not found (404)") {
     return <NoUserFound />;
   }
 
   if (error) {
-    return <div>Error: {error}</div>;
+    return <div>{error}</div>;
   }
 
   return (
