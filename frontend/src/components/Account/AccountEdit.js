@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useParams } from "react-router-dom";
-import api from '../../api/api'; // Import the Axios instance
+import api from '../../_utils/api/api'; // Import the Axios instance
 import { getEmailFromCrypto, REGEX } from "../../_utils/auth/auth.functions";
 import { userModified } from "../../_utils/toasts/users";
 import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
