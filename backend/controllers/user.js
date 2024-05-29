@@ -11,6 +11,7 @@ exports.signup = (req, res, next) => {
   let password = req.body.password;
   let emailHash = cryptoJS.MD5(req.body.email).toString();
   let emailEncrypted = cryptoJS.AES.encrypt(req.body.email, "Secret Passphrase").toString();
+  let imageUrl = "https://freeimghost.net/images/2022/05/25/icon1653051982534.webp";
 
   if (!name || !surname || !password || !req.body.email) {
     return res.status(400).json({ error: "Missing parameters" });
@@ -27,6 +28,7 @@ exports.signup = (req, res, next) => {
               email: emailEncrypted,
               emailHash: emailHash,
               password: hash,
+              imageUrl: imageUrl,
             });
             const token = jwt.sign({ userId: newUser.id }, process.env.JWT_SECRET, { expiresIn: '1h' });
             res.status(201).json({
