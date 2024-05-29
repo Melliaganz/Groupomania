@@ -2,7 +2,7 @@ const express = require("express");
 const cors = require("cors");
 const bodyParser = require("body-parser");
 const helmet = require("helmet");
-const xss = require("xss-clean")
+const xss = require("xss-clean");
 const path = require('path');
 const userRoutes = require("./routes/user");
 const messageRoutes = require("./routes/message");
@@ -30,7 +30,12 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
 // Serve static files from the "images" directory
-app.use('/images', express.static(path.join(__dirname, 'images')));
+app.use('/images', express.static(path.join(__dirname, 'images'), {
+  setHeaders: (res, path) => {
+    res.setHeader('Cross-Origin-Resource-Policy', 'cross-origin');
+    res.setHeader('Cross-Origin-Opener-Policy', 'same-origin');
+  }
+}));
 
 // Protection against XSS attacks
 app.use(xss());

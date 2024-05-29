@@ -42,7 +42,6 @@ exports.signup = async (req, res, next) => {
   }
 };
 
-
 exports.login = async (req, res, next) => {
   const { email, password } = req.body;
   const emailHash = cryptoJS.MD5(email).toString();
@@ -73,7 +72,6 @@ exports.login = async (req, res, next) => {
     res.status(500).json({ error: "Unable to log in" });
   }
 };
-
 
 exports.logout = (req, res, next) => {
   res.status(200).json({ message: 'Logged out successfully!' });
@@ -131,7 +129,7 @@ exports.updateUserProfile = async (req, res, next) => {
       return res.status(404).json({ error: "User not found" });
     }
 
-    if (user.imageUrl) {
+    if (user.imageUrl && imageUrl) {
       const filename = user.imageUrl.split("/images/")[1];
       fs.unlink(`images/${filename}`, (err) => {
         if (err) {
@@ -150,7 +148,7 @@ exports.updateUserProfile = async (req, res, next) => {
       });
 
       if (updatedUser) {
-        res.status(201).json("Profile updated");
+        res.status(200).json({ message: "Profile updated" });
       } else {
         res.status(500).json({ error: "Cannot update profile" });
       }
