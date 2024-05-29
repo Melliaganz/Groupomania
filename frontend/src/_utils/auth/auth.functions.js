@@ -49,13 +49,25 @@ const logout = async () => {
 };
 
 // Function to get account information
-const getAccount = (accountId) => {
-  return api.get(`auth/account/${accountId}`);
+const getAccount = async (accountId) => {
+  try {
+    const response = await api.get(`auth/account/${accountId}`);
+    return response;
+  } catch (error) {
+    console.error("Error fetching account information:", error);
+    throw error; // Re-throw the error to handle it in the calling function
+  }
 };
 
 // Function to delete user account
-const deleteAccount = (accountId) => {
-  return api.delete(`auth/account/${accountId}`);
+const deleteAccount = async (accountId) => {
+  try {
+    const response = await api.delete(`auth/account/${accountId}`);
+    return response;
+  } catch (error) {
+    console.error("Error deleting account:", error);
+    throw error; // Re-throw the error to handle it in the calling function
+  }
 };
 
 // Debug logs to verify localStorage values
