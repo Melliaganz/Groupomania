@@ -2,56 +2,53 @@ const models = require("../models");
 const functions = require("./functions");
 
 exports.createMessage = (req, res) => {
-  // Getting auth header
-  let userInfos = functions.getInfosUserFromToken(req);
+  try {
+    let userInfos = functions.getInfosUserFromToken(req);
 
-  if (userInfos.userId < 0) {
-    return res.status(400).json({ error: "Wrong token" });
-  }
+    if (userInfos.userId < 0) {
+      return res.status(400).json({ error: "Wrong token" });
+    }
 
-  // Params
-  let title = req.body.title;
-  let content = req.body.content;
+    let title = req.body.title;
+    let content = req.body.content;
 
-  if (!title || !content) {
-    return res.status(400).json({ error: "Missing parameters" });
-  }
+    if (!title || !content) {
+      return res.status(400).json({ error: "Missing parameters" });
+    }
 
-  if (title.length <= 2 || content.length <= 4) {
-    return res.status(400).json({ error: "Invalid parameters" });
-  }
+    if (title.length <= 2 || content.length <= 4) {
+      return res.status(400).json({ error: "Invalid parameters" });
+    }
 
-  models.User.findOne({
-    where: { id: userInfos.userId },
-  })
-    .then((user) => {
-      if (user) {
-        models.Message.create({
-          title: title,
-          content: content,
-          likes: 0,
-          userId: user.id, // Assurez-vous d'inclure userId
-          imageUrl: req.file ? `${req.protocol}://${req.get('host')}/images/${req.file.filename}` : null,
-        })
-          .then((newMessage) => {
-            if (newMessage) {
-              return res.status(201).json({ message: "Message posted!" });
-            } else {
-              return res.status(500).json({ error: "Cannot post message" });
-            }
+    models.User.findOne({ where: { id: userInfos.userId } })
+      .then((user) => {
+        if (user) {
+          models.Message.create({
+            title: title,
+            content: content,
+            likes: 0,
+            userId: user.id,
+            imageUrl: req.file ? `${req.protocol}://${req.get('host')}/images/${req.file.filename}` : null,
           })
-          .catch((error) => {
-            console.error("Error creating message:", error);
-            return res.status(500).json({ error: "Internal error", error });
-          });
-      } else {
-        return res.status(404).json({ error: "User not found" });
-      }
-    })
-    .catch((error) => {
-      console.error("Error verifying user:", error);
-      return res.status(500).json({ error: "Unable to verify user" });
-    });
+            .then((newMessage) => {
+              return res.status(201).json({ message: "Message posted!" });
+            })
+            .catch((error) => {
+              console.error("Error creating message:", error);
+              return res.status(500).json({ error: "Internal error" });
+            });
+        } else {
+          return res.status(404).json({ error: "User not found" });
+        }
+      })
+      .catch((error) => {
+        console.error("Error verifying user:", error);
+        return res.status(500).json({ error: "Unable to verify user" });
+      });
+  } catch (error) {
+    console.error("Unexpected error:", error);
+    return res.status(500).json({ error: "Internal server error" });
+  }
 };
 
 exports.getAllMessages = (req, res) => {
