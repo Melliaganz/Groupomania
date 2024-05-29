@@ -9,58 +9,52 @@ import { NoUserFound } from "../Infos/NotFound";
 const AccountContainer = (params) => {
   const [error, setError] = useState(null);
   const [isLoaded, setIsLoaded] = useState(false);
-  const [account, setAccount] = useState([]);
+  const [account, setAccount] = useState(null); // Use null instead of empty array
   const { id } = useParams();
   const [refetch, setRefetch] = useState(false);
 
-  async function fetchAccount() {
-    getAccount(id).then(
-      (res) => {
-        if (res.status === 200) {
-          res.json().then((result) => {
-            setAccount(result);
-            setIsLoaded(true);
-          });
-        } else if (res.status === 404) {
-          setError(404);
-          setIsLoaded(true);
-        } else {
-          setError(res.statusText);
-          setIsLoaded(true);
-        }
-      },
-      (error) => {
-        setError(error);
-        setIsLoaded(true);
+  const fetchAccount = async () => {
+    try {
+      const res = await getAccount(id);
+      if (res.status === 200) {
+        const result = await res.json();
+        setAccount(result);
+      } else if (res.status === 404) {
+        setError(404);
+      } else {
+        setError(res.statusText);
       }
-    );
-  }
+    } catch (error) {
+      setError(error.message);
+    } finally {
+      setIsLoaded(true);
+    }
+  };
 
   useEffect(() => {
     fetchAccount();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [refetch]);
+  }, [refetch, id]); // Add id as a dependency
 
   const handlePost = () => {
     fetchAccount();
   };
 
   const handlerDeletedAccount = () => {
-    setAccount((account) => account = []);
+    setAccount(null); // Set account to null
     setIsLoaded(false);
-    setRefetch(true);
+    setRefetch((prev) => !prev); // Toggle refetch to true or false
   };
 
-  if (error && error === 404) {
+  if (error === 404) {
     return (
       <div>
         <NoUserFound />
       </div>
     );
   } else if (error) {
-    return <div>Erreur : {error}</div>;
+    return <div>Error: {error}</div>;
   } else if (!isLoaded) {
-    return <div>Chargement...</div>;
+    return <div>Loading...</div>;
   } else {
     return (
       account && (
@@ -83,4 +77,5 @@ const AccountContainer = (params) => {
     );
   }
 };
+
 export default AccountContainer;
