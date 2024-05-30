@@ -1,21 +1,24 @@
-import globalFunctions from "../../_utils/_functions";
-import { deleteOneMessage } from "../../_utils/messages/messages.functions";
-import ClearIcon from '@mui/icons-material/Clear';
 import React from "react";
+import ClearIcon from '@mui/icons-material/Clear';
 import ThumbUpIcon from '@mui/icons-material/ThumbUp';
 import AddCommentIcon from '@mui/icons-material/AddComment';
 import ShareIcon from '@mui/icons-material/Share';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
+import globalFunctions from "../../_utils/_functions";
+import { deleteOneMessage } from "../../_utils/messages/messages.functions";
 
 const Message = ({ ...message }) => {
   const onClickDeleteMessage = async (e) => {
     e.preventDefault();
-    if (window.confirm("Voulez vous vraiment supprimer ce message ?")) {
+    if (window.confirm("Voulez-vous vraiment supprimer ce message ?")) {
       try {
         await deleteOneMessage(message.id);
-        message.onErase();
+        if (message.onErase) {
+          message.onErase();
+        }
       } catch (error) {
         console.error("Failed to delete the message:", error);
+        // Optionally display an error message to the user
       }
     }
   };
@@ -24,14 +27,12 @@ const Message = ({ ...message }) => {
     <div className="card bg-transparent">
       <div className="card-header">
         <div className="justify-content-between align-items-center">
-          <div className="justify-content-between align-items-center">
-            <div className="ml-2">
-              <a className="card-link" href={`/account/${message.User.id}`}>
-                <img src={message.User.imageUrl} className="profilePic" alt={`${message.User.name} ${message.User.surname}`} />
-                <div className="h5 m-0">@{message.User.name}</div>
-                <div className="h7 text-muted">{message.User.name} {message.User.surname}</div>
-              </a>
-            </div>
+          <div className="ml-2">
+            <a className="card-link" href={`/account/${message.User.id}`}>
+              <img src={message.User.imageUrl} className="profilePic" alt={`${message.User.name} ${message.User.surname}`} />
+              <div className="h5 m-0">@{message.User.name}</div>
+              <div className="h7 text-muted">{message.User.name} {message.User.surname}</div>
+            </a>
           </div>
         </div>
       </div>
