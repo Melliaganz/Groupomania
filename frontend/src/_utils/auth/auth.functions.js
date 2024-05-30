@@ -71,15 +71,7 @@ const deleteAccount = async (accountId) => {
 };
 
 // Debug logs to verify localStorage values
-setTimeout(() => {
-  console.log('LocalStorage values:');
-  console.log('groupomania:', getLocalStorageValue('groupomania'));
-  console.log('groupomaniaId:', getLocalStorageValue('groupomaniaId'));
-  console.log('token:', getLocalStorageValue('token'));
-
-  console.log('isLogged:', isLogged());
-  console.log('getIdFromLocalStorage:', getIdFromLocalStorage());
-}, 1000);
+setTimeout(() => {}, 1000);
 
 export {
   getEmailFromCrypto,
