@@ -26,8 +26,12 @@ const getOneMessage = async (messageId) => {
     const response = await api.get(`messages/${messageId}`);
     return response.data;
   } catch (error) {
-    console.error("Error fetching message:", error.response ? error.response.data : error.message);
-    throw error;
+    if (error.response && error.response.status === 404) {
+      return null; // Handle 404 by returning null or a custom value
+    } else {
+      console.error("Error fetching message:", error.response ? error.response.data : error.message);
+      throw error;
+    }
   }
 };
 

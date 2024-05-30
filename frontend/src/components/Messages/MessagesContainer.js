@@ -21,30 +21,35 @@ const MessageContainer = ({ messageQuery, postMessage }) => {
   const [totalItems, setTotalItems] = useState(0);
   const [refetch, setRefetch] = useState(0);
 
-  const fetchMessage = useCallback(() => {
+  const fetchMessage = useCallback(async () => {
     setIsLoaded(false);
     setError(null);
 
-    const fetchFunction = {
-      getMessages: () => getMessages(page),
-      getOneMessage: () => getOneMessage(id),
-      getAllUserMessages: () => getAllUserMessages(id, page),
-    }[messageQuery];
-
-    fetchFunction()
-      .then((response) => {
-        if (messageQuery === "getOneMessage") {
-          setMessages([response]);
-        } else {
+    try {
+      let response;
+      switch (messageQuery) {
+        case "getMessages":
+          response = await getMessages(page);
           setMessages((prevMessages) => [...prevMessages, ...response.messages]);
           setTotalItems(response.totalItems);
-        }
-        setIsLoaded(true);
-      })
-      .catch((error) => {
-        setError(error.response ? error.response.status : error.message);
-        setIsLoaded(true);
-      });
+          break;
+        case "getOneMessage":
+          response = await getOneMessage(id);
+          setMessages([response]);
+          break;
+        case "getAllUserMessages":
+          response = await getAllUserMessages(id, page);
+          setMessages((prevMessages) => [...prevMessages, ...response.messages]);
+          setTotalItems(response.totalItems);
+          break;
+        default:
+          throw new Error("Invalid message query");
+      }
+      setIsLoaded(true);
+    } catch (error) {
+      setError(error.response ? error.response.status : error.message);
+      setIsLoaded(true);
+    }
   }, [messageQuery, page, id]);
 
   useEffect(() => {
@@ -85,11 +90,7 @@ const MessageContainer = ({ messageQuery, postMessage }) => {
         </div>
       </section>
     );
-  } else if (
-    messages &&
-    messages.length > 0 &&
-    (messageQuery === "getAllUserMessages" || messageQuery === "getMessages")
-  ) {
+  } else if (messages && messages.length > 0) {
     return (
       <React.Fragment>
         {postMessage && <PostMessage onPost={handlePost} />}
