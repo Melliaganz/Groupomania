@@ -6,8 +6,8 @@ import CommentIcon from '@mui/icons-material/Comment';
 import api from '../../_utils/api/api'; // Import the configured axios instance
 
 const PostComment = ({ onPost }) => {
-  const { id } = useParams();
-  const [textValue, setTextValue] = useState("");
+  const { id } = useParams(); // Get the message ID from the URL parameters
+  const [textValue, setTextValue] = useState(""); // State to manage comment text
 
   const handleSendData = async (e) => {
     e.preventDefault();
@@ -17,9 +17,8 @@ const PostComment = ({ onPost }) => {
 
       if (response.status === 201) {
         onPost();
-        setTextValue("");
-        toastCommentPosted();
-        window.location.reload();
+        setTextValue(""); // Clear the text area
+        toastCommentPosted(); // Show success toast
       } else {
         console.error('Failed to post comment', response);
       }
