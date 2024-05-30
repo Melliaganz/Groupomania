@@ -1,17 +1,15 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import logo from "../../images/icon-above-font-transparent.webp";
 import { isLogged } from "../../_utils/auth/auth.functions";
 import { userConnected } from "../../_utils/toasts/users";
 import LoginIcon from '@mui/icons-material/Login';
 import api from '../../_utils/api/api'; // Import the configured axios instance
 
-const LoginForm = ({ onLogin }) => {
+const LoginForm = ({ onLogin, navigate }) => {
   const [emailValue, setEmailValue] = useState("");
   const [passwordValue, setPasswordValue] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const navigate = useNavigate();
 
   useEffect(() => {
     if (isLogged()) {

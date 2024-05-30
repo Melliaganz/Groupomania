@@ -1,19 +1,17 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import logo from "../../images/icon-above-font-transparent.webp";
 import { userRegistered } from "../../_utils/toasts/users";
 import { REGEX } from "../../_utils/auth/auth.functions";
 import SaveAltIcon from '@mui/icons-material/SaveAlt';
 import api from "../../_utils/api/api"; // Import the configured axios instance
 
-const RegistrationForm = () => {
+const RegistrationForm = ({ navigate }) => {
   const [emailValue, setEmailValue] = useState("");
   const [passwordValue, setPasswordValue] = useState("");
   const [firstnameValue, setFirstnameValue] = useState("");
   const [surnameValue, setSurnameValue] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const navigate = useNavigate();
 
   const sendData = async (e) => {
     e.preventDefault();
@@ -36,7 +34,7 @@ const RegistrationForm = () => {
         localStorage.setItem('groupomaniaId', response.data.userId);
 
         userRegistered();
-        navigate("/");
+        navigate("/"); // Use the debounced navigate function passed as a prop
       } else {
         setError(response.data.message || "Une erreur s'est produite. Veuillez réessayer.");
       }
