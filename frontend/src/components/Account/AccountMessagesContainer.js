@@ -6,24 +6,26 @@ import { NoMessageFound } from "../Infos/NotFound";
 import FadeIn from "react-fade-in";
 import InfiniteScroll from "react-infinite-scroll-component";
 
-const AccountMessagesContainer = ({ ...params }) => {
+const AccountMessagesContainer = () => {
   const [error, setError] = useState(null);
   const [isLoaded, setIsLoaded] = useState(false);
   const [messages, setMessages] = useState([]);
   const { id } = useParams();
   const [page, setPage] = useState(0);
   const [totalItems, setTotalItems] = useState(0);
-  const [refetch, setRefetch] = useState(0);
+  const [hasMore, setHasMore] = useState(true);
 
-  const fetchMessage = () => {
+  const fetchMessages = (page) => {
     getAllUserMessages(id, page).then(
       (res) => {
         if (res.status === 200) {
           res.json().then((result) => {
-            setMessages([...messages, ...result.messages]);
+            setMessages((prevMessages) => [...prevMessages, ...result.messages]);
             setTotalItems(result.totalItems);
-            console.log(result);
             setIsLoaded(true);
+            if (result.messages.length === 0) {
+              setHasMore(false);
+            }
           });
         } else if (res.status === 404) {
           setError(404);
@@ -41,18 +43,18 @@ const AccountMessagesContainer = ({ ...params }) => {
   };
 
   useEffect(() => {
-    fetchMessage();
+    fetchMessages(page);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [page, refetch]);
+  }, [page]);
 
   const handleErase = () => {
-    setRefetch((refetch) => refetch + 1);
-    setPage((page) => {
-      page = 0;
-    });
-    setMessages( messages => messages = []);
-    setIsLoaded((isLoaded) => isLoaded = false);
-    
+    setMessages([]);
+    setPage(0);
+    setHasMore(true);
+    setIsLoaded(false);
+    setTimeout(() => {
+      setPage((prevPage) => prevPage + 1);
+    }, 500); // Add a slight delay to ensure state reset before fetching new messages
   };
 
   if (error && error === 404) {
@@ -65,16 +67,14 @@ const AccountMessagesContainer = ({ ...params }) => {
     return <div>Erreur : {error}</div>;
   } else if (!isLoaded) {
     return <div>Chargement...</div>;
-  }  else if (
-    messages &&
-    messages.length > 0 
-  ) {
+  } else if (messages && messages.length > 0) {
     return (
       <React.Fragment>
         <InfiniteScroll
-          dataLength={totalItems}
-          next={() => setPage(+1)}
-          hasMore={true}
+          dataLength={messages.length}
+          next={() => setPage((prevPage) => prevPage + 1)}
+          hasMore={hasMore}
+          loader={<div>Chargement...</div>}
         >
           <section className="row justify-content-center">
             {messages.map((message) => (
@@ -96,4 +96,5 @@ const AccountMessagesContainer = ({ ...params }) => {
     );
   }
 };
+
 export default AccountMessagesContainer;
