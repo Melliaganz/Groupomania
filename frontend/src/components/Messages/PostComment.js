@@ -3,11 +3,11 @@ import { toastCommentPosted } from '../../_utils/toasts/comments';
 import "react-toastify/dist/ReactToastify.css";
 import { useParams } from 'react-router-dom';
 import CommentIcon from '@mui/icons-material/Comment';
-import api from '../../_utils/api/api'; // Import the configured axios instance
+import api from '../../_utils/api/api';
 
 const PostComment = ({ onPost }) => {
-  const { id } = useParams(); // Get the message ID from the URL parameters
-  const [textValue, setTextValue] = useState(""); // State to manage comment text
+  const { id } = useParams();
+  const [textValue, setTextValue] = useState("");
 
   const handleSendData = async (e) => {
     e.preventDefault();
@@ -17,23 +17,20 @@ const PostComment = ({ onPost }) => {
 
       if (response.status === 201) {
         onPost();
-        setTextValue(""); // Clear the text area
-        toastCommentPosted(); // Show success toast
+        setTextValue("");
+        toastCommentPosted();
       } else {
         console.error('Failed to post comment', response);
       }
     } catch (error) {
       console.error('Error posting comment', error);
       if (error.response) {
-        // Server responded with a status other than 2xx
         console.error('Response data:', error.response.data);
         console.error('Response status:', error.response.status);
         console.error('Response headers:', error.response.headers);
       } else if (error.request) {
-        // Request was made but no response received
         console.error('Request data:', error.request);
       } else {
-        // Something else happened while setting up the request
         console.error('Error message:', error.message);
       }
     }
