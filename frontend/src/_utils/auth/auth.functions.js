@@ -70,9 +70,6 @@ const deleteAccount = async (accountId) => {
   }
 };
 
-// Debug logs to verify localStorage values
-setTimeout(() => {}, 1000);
-
 export {
   getEmailFromCrypto,
   REGEX,
