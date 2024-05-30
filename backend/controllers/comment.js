@@ -1,94 +1,74 @@
 const models = require("../models");
-const user = require("../models/user");
 const functions = require("./functions");
 
-exports.createComment = (req, res) => {
-  let userInfos = functions.getInfosUserFromToken(req, res);
+exports.createComment = async (req, res) => {
+  const userInfos = functions.getInfosUserFromToken(req, res);
   if (userInfos.userId < 0) {
     return res.status(400).json({ error: "Wrong token" });
   }
-  // Params
-  let messageId = req.params.id
-  let text = req.body.text;
 
-  if (text == null) {
-    return res.status(400).json({ error: " Missing parameters " })
+  const { id: messageId } = req.params;
+  const { text } = req.body;
+
+  if (!text) {
+    return res.status(400).json({ error: "Missing parameters" });
   }
 
- if (text.length <= 2) {
-   return res.status(400).json({ error: "Invalid Parameters" });
- }
+  if (text.length <= 2) {
+    return res.status(400).json({ error: "Invalid Parameters" });
+  }
 
-  models.User.findOne({
-    where: { id: userInfos.userId },
-  })
-    .then((user) => {
-      if (user) {
-        models.Comment.create({
-          UserId: user.id,
-          MessageId: messageId,
-          text: text,
-        })
-          .then((newComment) => {
-            if (newComment) {
-              return res.status(201).json({ Message: "Message posted !" });
-            } else {
-              return res.status(500).json({  error: "error.message" });
-            }
-          })
-          .catch((error) => {
-            return res.status(500).json({  error: "error.message" });
-          });
-      } else {
-        return res.status(404).json({  error: "error.message" });
-      }
-    })
-    .catch((error) => {
-      return res.status(500).json({ error: "error.message" });
-    });
-};
-exports.deleteComments = (req, res) => {
-  let userInfos = functions.getInfosUserFromToken(req, res);
-  let commentId = req.params.id;
-  console.log(commentId);
+  try {
+    const user = await models.User.findOne({ where: { id: userInfos.userId } });
 
-  models.Comment.findOne({
-    where: { id: commentId},
-  })
-  .then((comment) => {
-    if (
-      (comment && comment.UserId === userInfos.userId) ||
-      userInfos.admin === true
-    ) {
-      models.Comment.destroy({
-        where: { id: commentId},
-      })
-      .then(() => {
-        res.status(200).json({ message: "Objet Supprimé !"});
-      })
-      .catch((error) => {res.status(400).json({ error })});
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
     }
-  })
-  .catch((error) => {
-    return res.status(404).json({ error: error.messsage})
-  })
-}
 
+    const newComment = await models.Comment.create({
+      UserId: user.id,
+      MessageId: messageId,
+      text: text,
+    });
 
-exports.getMessageAllComments = (req, res) => {
-  let userInfos = functions.getInfosUserFromToken(req, res);
-  let messageId = req.params.id;
-  let CurrentMessageId = req.params.id;
-  let fields = req.query.fields;
-  let order = req.query.order;
+    return res.status(201).json({ message: "Comment posted!", newComment });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: error.message });
+  }
+};
 
-  const page = req.query.page;
-  const size = req.query.size;
+exports.deleteComments = async (req, res) => {
+  const userInfos = functions.getInfosUserFromToken(req, res);
+  const { commentId } = req.params;
+
+  try {
+    const comment = await models.Comment.findOne({ where: { id: commentId } });
+
+    if (!comment) {
+      return res.status(404).json({ error: "Comment not found" });
+    }
+
+    if (comment.UserId === userInfos.userId || userInfos.admin) {
+      await models.Comment.destroy({ where: { id: commentId } });
+      return res.status(200).json({ message: "Comment deleted!" });
+    } else {
+      return res.status(403).json({ error: "Unauthorized action" });
+    }
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: error.message });
+  }
+};
+
+exports.getMessageAllComments = async (req, res) => {
+  const userInfos = functions.getInfosUserFromToken(req, res);
+  const { id: messageId } = req.params;
+  const { fields, order, page = 0, size = 5 } = req.query;
 
   const getPagination = (page, size) => {
     const limit = size ? +size : 5;
     const offset = page ? page * limit : 0;
-    
     return { limit, offset };
   };
 
@@ -96,63 +76,55 @@ exports.getMessageAllComments = (req, res) => {
     const { count: totalItems, rows: comments } = data;
     const currentPage = page ? +page : 0;
     const totalPages = Math.ceil(totalItems / limit);
-
-    return {totalItems, comments, totalPages, currentPage};
+    return { totalItems, comments, totalPages, currentPage };
   };
+
   const { limit, offset } = getPagination(page, size);
 
-  models.Comment.findAndCountAll({
-    where: {messageId: CurrentMessageId},
-    order: [order != null ? order.split(":") : ["createdAt", "DESC"]],
-    attributes: fields !== "*" && fields != null ? fields.split(",") : null,
-    limit: !isNaN(limit) ? limit : 5 ,
-    offset: !isNaN(offset) ? offset : 0,
-    include: [
-      {
-        model: models.User,
-        attributes: ["name", "surname", "id", "imageUrl"],
-      },
-    ],
-  }).then((data) => {
+  try {
+    const data = await models.Comment.findAndCountAll({
+      where: { messageId },
+      order: order ? order.split(":") : [["createdAt", "DESC"]],
+      attributes: fields ? fields.split(",") : null,
+      limit,
+      offset,
+      include: [{ model: models.User, attributes: ["name", "surname", "id", "imageUrl"] }],
+    });
+
     const response = getPagingData(data, page, limit);
-    console.log(response.comments.length);
-    if (
-      (response.comments.length > 0 &&
-        response.comments[0].dataValues.messageId === messageId) ||
-        userInfos.admin === true
-    ) {
-      for (index = 0; index < response.comments.length; index++) {
-        response.comments[index].dataValues.canEdit = true;
-      }
+
+    if (response.comments.length > 0 && (response.comments[0].dataValues.messageId === messageId || userInfos.admin)) {
+      response.comments.forEach(comment => comment.dataValues.canEdit = true);
       res.send(response);
     } else if (response.totalItems > 0) {
       res.send(response);
     } else {
-      res.status(404).json({ error: "error.messsssage" })
+      res.status(404).json({ error: "No comments found" });
     }
-  })
-}
-exports.getOneComment= (req, res) => {
-  let userInfos = functions.getInfosUserFromToken(req, res);
-  let commentId = req.params.id;
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: error.message });
+  }
+};
 
-  models.Comment.findOne({
-    where: {id: commentId},
-  })
-  .then((comments) => {
-    if (
-      (comments && comments.UserId === userInfos.userId) ||
-      userInfos.admin === true 
-    ) {
-      comments.dataValues.canEdit = true;
-      res.status(200).json(comments);
-    } else if (comments) {
-      res.status(200).json(comments);
-    } else {
-      res.status(404).send({ error: "Comment Not Found "});
+exports.getOneComment = async (req, res) => {
+  const userInfos = functions.getInfosUserFromToken(req, res);
+  const { commentId } = req.params;
+
+  try {
+    const comment = await models.Comment.findOne({ where: { id: commentId } });
+
+    if (!comment) {
+      return res.status(404).json({ error: "Comment not found" });
     }
-  })
-  .catch((error) => {
-    return res.status(404).json({ error: "error.messssssage"});
-  });
+
+    if (comment.UserId === userInfos.userId || userInfos.admin) {
+      comment.dataValues.canEdit = true;
+    }
+
+    res.status(200).json(comment);
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: error.message });
+  }
 };
