@@ -1,7 +1,6 @@
 'use strict';
-const {
-  Model
-} = require('sequelize');
+const { Model } = require('sequelize');
+
 module.exports = (sequelize, DataTypes) => {
   class Comment extends Model {
     /**
@@ -10,6 +9,7 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
+      // Association with User model
       models.Comment.belongsTo(models.User, {
         foreignKey: {
           allowNull: false,
@@ -17,7 +17,9 @@ module.exports = (sequelize, DataTypes) => {
         constraints: true,
         onDelete: "CASCADE",
         hooks: true,
-      })
+      });
+
+      // Association with Message model
       models.Comment.belongsTo(models.Message, {
         foreignKey: {
           allowNull: false,
@@ -25,16 +27,28 @@ module.exports = (sequelize, DataTypes) => {
         constraints: true,
         onDelete: "CASCADE",
         hooks: true,
-      })
+      });
     }
   }
+
+  // Initialize Comment model with attributes
   Comment.init({
-    userId: DataTypes.INTEGER,
-    messageId: DataTypes.INTEGER,
-    text: DataTypes.TEXT
+    userId: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+    },
+    messageId: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+    },
+    text: {
+      type: DataTypes.TEXT,
+      allowNull: false,
+    },
   }, {
     sequelize,
     modelName: 'Comment',
   });
+
   return Comment;
 };
