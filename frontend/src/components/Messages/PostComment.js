@@ -13,7 +13,7 @@ const PostComment = ({ onPost }) => {
     e.preventDefault();
 
     try {
-      const response = await api.post(`/messages/${id}/comment`, { text: textValue });
+      const response = await api.post(`/comment/${id}/comment`, { text: textValue });
 
       if (response.status === 201) {
         onPost();
