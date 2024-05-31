@@ -8,6 +8,7 @@ import api from '../../_utils/api/api';
 const PostComment = ({ onPost }) => {
   const { id } = useParams();
   const [textValue, setTextValue] = useState("");
+  const [error, setError] = useState(null);
 
   const handleSendData = async (e) => {
     e.preventDefault();
@@ -19,8 +20,10 @@ const PostComment = ({ onPost }) => {
         onPost();
         setTextValue("");
         toastCommentPosted();
+        setError(null);
       } else {
         console.error('Failed to post comment', response);
+        setError(`Failed to post comment: ${response.statusText}`);
       }
     } catch (error) {
       console.error('Error posting comment', error);
@@ -28,13 +31,13 @@ const PostComment = ({ onPost }) => {
         console.error('Response data:', error.response.data);
         console.error('Response status:', error.response.status);
         console.error('Response headers:', error.response.headers);
-        alert(`Error: ${error.response.status} - ${error.response.data}`);
+        setError(`Error: ${error.response.status} - ${error.response.data.error}`);
       } else if (error.request) {
         console.error('Request data:', error.request);
-        alert('Error: No response received from the server.');
+        setError('Error: No response received from the server.');
       } else {
         console.error('Error message:', error.message);
-        alert(`Error: ${error.message}`);
+        setError(`Error: ${error.message}`);
       }
     }
   };
@@ -58,6 +61,7 @@ const PostComment = ({ onPost }) => {
                     onChange={(e) => setTextValue(e.target.value)}
                   />
                 </div>
+                {error && <div className="alert alert-danger" role="alert">{error}</div>}
               </div>
             </div>
             <div className='btn-toolbar justify-content-between'>
