@@ -46,7 +46,7 @@ app.use(express.json({ limit: '10kb' }));
 // Routes
 app.use("/api/auth", userRoutes);
 app.use("/api/messages", messageRoutes);
-app.use('/api/comments', commentRoutes);
+app.use('/api/messages', commentRoutes);
 
 // Global error handling
 app.use((err, req, res, next) => {
