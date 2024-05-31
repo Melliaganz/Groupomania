@@ -7,8 +7,8 @@ exports.createComment = async (req, res) => {
     return res.status(400).json({ error: "Wrong token" });
   }
 
-  const { id: messageId } = req.params;
-  const { text } = req.body;
+  const { id: messageId } = req.params; // Extracting messageId from params
+  const { text } = req.body; // Extracting text from body
 
   if (!text) {
     return res.status(400).json({ error: "Missing parameters" });
@@ -26,8 +26,8 @@ exports.createComment = async (req, res) => {
     }
 
     const newComment = await models.Comment.create({
-      UserId: user.id,
-      MessageId: messageId,
+      userId: user.id, // Correct camel case
+      messageId: messageId, // Correct camel case
       text: text,
     });
 
@@ -49,7 +49,7 @@ exports.deleteComments = async (req, res) => {
       return res.status(404).json({ error: "Comment not found" });
     }
 
-    if (comment.UserId === userInfos.userId || userInfos.admin) {
+    if (comment.userId === userInfos.userId || userInfos.admin) { // Correct camel case
       await models.Comment.destroy({ where: { id: commentId } });
       return res.status(200).json({ message: "Comment deleted!" });
     } else {
@@ -83,7 +83,7 @@ exports.getMessageAllComments = async (req, res) => {
 
   try {
     const data = await models.Comment.findAndCountAll({
-      where: { messageId },
+      where: { messageId }, // Correct camel case
       order: order ? order.split(":") : [["createdAt", "DESC"]],
       attributes: fields ? fields.split(",") : null,
       limit,
@@ -107,7 +107,6 @@ exports.getMessageAllComments = async (req, res) => {
   }
 };
 
-
 exports.getOneComment = async (req, res) => {
   const userInfos = functions.getInfosUserFromToken(req, res);
   const { commentId } = req.params;
@@ -119,7 +118,7 @@ exports.getOneComment = async (req, res) => {
       return res.status(404).json({ error: "Comment not found" });
     }
 
-    if (comment.UserId === userInfos.userId || userInfos.admin) {
+    if (comment.userId === userInfos.userId || userInfos.admin) { // Correct camel case
       comment.dataValues.canEdit = true;
     }
 

@@ -81,9 +81,14 @@ function getInfosUserFromToken(req) {
   if (!token) {
     throw new Error("Token not found");
   }
-  const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
-  return { userId: decodedToken.userId, admin: decodedToken.admin };
+  try {
+    const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
+    return { userId: decodedToken.userId, admin: decodedToken.admin };
+  } catch (error) {
+    throw new Error("Invalid token");
+  }
 }
+
 
 // Check if user is admin
 function isAdmin(req, res) {
