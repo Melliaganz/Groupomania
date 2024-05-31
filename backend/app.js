@@ -11,21 +11,44 @@ require('dotenv').config();
 
 const app = express();
 
+// Set security headers
 app.use(helmet());
-app.use(cors({ origin: 'https://groupomania-eta.vercel.app', credentials: true }));
-app.options('*', cors());
 
+// Enable CORS with specific origin and credentials
+const corsOptions = {
+  origin: 'https://groupomania-eta.vercel.app', // Your frontend URL
+  credentials: true, // Allow credentials to be sent
+  allowedHeaders: ['Origin', 'X-Requested-With', 'Content', 'Accept', 'Content-Type', 'Authorization'],
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+};
+
+app.use(cors(corsOptions));
+app.options('*', cors(corsOptions)); // Handle preflight requests
+
+// Body parser to handle JSON and URL-encoded data
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
-app.use('/images', express.static(path.join(__dirname, 'images')));
 
+// Serve static files from the "images" directory with appropriate headers
+app.use('/images', express.static(path.join(__dirname, 'images'), {
+  setHeaders: (res, path) => {
+    res.setHeader('Cross-Origin-Resource-Policy', 'cross-origin'); // Allow resources to be accessed from different origins
+    res.setHeader('Cross-Origin-Opener-Policy', 'same-origin'); // Mitigate side-channel attacks
+  }
+}));
+
+// Protection against XSS attacks
 app.use(xss());
+
+// Prevent DOS attacks by limiting request body size
 app.use(express.json({ limit: '10kb' }));
 
+// Routes
 app.use("/api/auth", userRoutes);
 app.use("/api/messages", messageRoutes);
 app.use('/api/comments', commentRoutes);
 
+// Global error handling
 app.use((err, req, res, next) => {
   console.error(err.stack);
   res.status(500).send('Something broke!');
