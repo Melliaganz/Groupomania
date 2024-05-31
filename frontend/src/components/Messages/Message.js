@@ -7,7 +7,7 @@ import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import globalFunctions from "../../_utils/_functions";
 import { deleteOneMessage } from "../../_utils/messages/messages.functions";
 
-const Message = ({ navigate, ...message }) => {
+const Message = ({ ...message }) => {
   const onClickDeleteMessage = async (e) => {
     e.preventDefault();
     if (window.confirm("Voulez-vous vraiment supprimer ce message ?")) {
@@ -15,7 +15,6 @@ const Message = ({ navigate, ...message }) => {
         await deleteOneMessage(message.id);
         if (message.onErase) {
           message.onErase();
-          navigate("/");
         }
       } catch (error) {
         console.error("Failed to delete the message:", error);
