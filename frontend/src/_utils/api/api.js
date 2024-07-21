@@ -2,7 +2,7 @@ import axios from 'axios';
 
 // Create an instance of axios
 const api = axios.create({
-  baseURL: 'https://groupomania-kc47.onrender.com.com/api', // Corrected base URL
+  baseURL: 'https://groupomania-kc47.onrender.com/api', // Corrected base URL
   headers: {
     'Content-Type': 'application/json',
   },
