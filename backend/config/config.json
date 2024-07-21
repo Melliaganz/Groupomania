@@ -8,7 +8,10 @@
     "dialect": "postgres"
   },
   "production": {
-    "use_env_variable": "DATABASE_URL",
+    "username": "groupomania_k4in_user",
+    "password": "aOuDTToNc0h97qvVQKlLNJSc10qr3Fsp",
+    "database": "groupomania_k4in",
+    "host": "dpg-cqel4uo8fa8c73e9v05g-a",
     "dialect": "postgres",
     "dialectOptions": {
       "ssl": {
