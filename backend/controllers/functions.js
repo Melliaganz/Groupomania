@@ -1,24 +1,7 @@
 const jwt = require("jsonwebtoken");
-const bcrypt = require("bcrypt");
-const User = require("../models/user");
-require('dotenv').config();
+require('dotenv').config({ quiet: true });
 
 const LOCK_TIME = 60 * 1000; // 1 minute
-
-// Compare passwords
-function comparePassword(password, userPassword, res) {
-  bcrypt
-    .compare(password, userPassword)
-    .then((valid) => {
-      if (!valid) {
-        console.log("Mot de passe invalide");
-        return res.status(401).json({ error: "Mot de passe (ou email) incorrect !" });
-      } else {
-        console.log("Mot de passe valide");
-      }
-    })
-    .catch((error) => res.status(500).json({ error }));
-}
 
 // Check password strength
 function checkPassword(password) {
@@ -107,7 +90,6 @@ module.exports = {
   resetUserLockAttempt,
   incrementLoginAttempt,
   blockUserAccount,
-  comparePassword,
   getInfosUserFromToken,
   isAdmin,
 };

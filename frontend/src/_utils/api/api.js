@@ -1,8 +1,12 @@
 import axios from 'axios';
 
+// URL de l'API : configurable via la variable d'env VITE_API_URL.
+// Defaut : backend local en developpement.
+const baseURL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
+
 // Create an instance of axios
 const api = axios.create({
-  baseURL: 'https://groupomania-kc47.onrender.com/api', // Corrected base URL
+  baseURL,
   headers: {
     'Content-Type': 'application/json',
   },

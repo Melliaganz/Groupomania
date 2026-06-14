@@ -1,6 +1,6 @@
 'use strict';
 
-require('dotenv').config(); // Charger les variables d'environnement
+require('dotenv').config({ quiet: true }); // Charger les variables d'environnement
 
 const fs = require('fs');
 const path = require('path');
@@ -12,15 +12,7 @@ const db = {};
 
 let sequelize;
 if (config.use_env_variable) {
-  sequelize = new Sequelize(process.env[config.use_env_variable], {
-    dialect: 'postgres',
-    dialectOptions: {
-      ssl: {
-        require: true,
-        rejectUnauthorized: false
-      }
-    }
-  });
+  sequelize = new Sequelize(process.env[config.use_env_variable], config);
 } else {
   sequelize = new Sequelize(config.database, config.username, config.password, config);
 }

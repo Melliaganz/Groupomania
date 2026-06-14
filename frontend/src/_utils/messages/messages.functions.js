@@ -45,9 +45,15 @@ const deleteOneMessage = async (messageId) => {
   }
 };
 
+const toggleMessageLike = async (messageId) => {
+  const response = await api.post(`messages/${messageId}/like`);
+  return response.data;
+};
+
 export {
   getOneMessage,
   deleteOneMessage,
   getMessages,
   getAllUserMessages,
+  toggleMessageLike,
 };

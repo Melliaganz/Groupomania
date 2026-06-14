@@ -1,5 +1,6 @@
 const models = require("../models");
 const functions = require("./functions");
+const social = require("./social");
 
 exports.createComment = async (req, res) => {
   const userInfos = functions.getInfosUserFromToken(req, res);
@@ -92,6 +93,7 @@ exports.getMessageAllComments = async (req, res) => {
     });
 
     const response = getPagingData(data, page, limit);
+    await social.decorateComments(response.comments, userInfos.userId);
 
     if (response.comments.length > 0 && (response.comments[0].dataValues.messageId === messageId || userInfos.admin)) {
       response.comments.forEach(comment => comment.dataValues.canEdit = true);
@@ -122,6 +124,7 @@ exports.getOneComment = async (req, res) => {
       comment.dataValues.canEdit = true;
     }
 
+    await social.decorateComments([comment], userInfos.userId);
     res.status(200).json(comment);
   } catch (error) {
     console.error(error);

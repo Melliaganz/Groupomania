@@ -15,8 +15,14 @@ const getOneComment = (commentId, messageId) => {
   return api.get(`messages/${messageId}/comment/${commentId}`);
 };
 
+const toggleCommentLike = async (messageId, commentId) => {
+  const response = await api.post(`messages/${messageId}/comment/${commentId}/like`);
+  return response.data;
+};
+
 export {
   getMessageAllComments,
   deleteOneComment,
   getOneComment,
+  toggleCommentLike,
 };

@@ -1,6 +1,6 @@
 import api from "../api/api";
 import { userLogout } from "../toasts/users";
-const CryptoJS = require("crypto-js");
+import CryptoJS from "crypto-js";
 
 const REGEX = {
   NAME_REGEX: "^([\\p{L}]+)([\\p{L}\\- ']*)$",

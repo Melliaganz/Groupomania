@@ -3,7 +3,10 @@ const bcrypt = require('bcrypt');
 const cryptoJS = require("crypto-js");
 const functions = require("./functions");
 const models = require("../models");
+const { resolveImageUrl } = require("../middleware/multer-config");
 const fs = require('fs');
+
+const DEFAULT_AVATAR = "icon1653051982534.png";
 
 exports.signup = async (req, res, next) => {
   const { name, surname, password, email } = req.body;
@@ -12,8 +15,8 @@ exports.signup = async (req, res, next) => {
   }
 
   const emailHash = cryptoJS.MD5(email).toString();
-  const emailEncrypted = cryptoJS.AES.encrypt(email, "Secret Passphrase").toString();
-  const imageUrl = "https://freeimghost.net/images/2022/05/25/icon1653051982534.webp";
+  const emailEncrypted = cryptoJS.AES.encrypt(email, process.env.EMAIL_SECRET).toString();
+  const imageUrl = `${req.protocol}://${req.get('host')}/images/${DEFAULT_AVATAR}`;
 
   try {
     const existingUser = await models.User.findOne({ where: { emailHash } });
@@ -31,7 +34,11 @@ exports.signup = async (req, res, next) => {
       imageUrl,
     });
 
-    const token = jwt.sign({ userId: newUser.id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+    const token = jwt.sign(
+      { userId: newUser.id, admin: newUser.admin || false },
+      process.env.JWT_SECRET,
+      { expiresIn: '1h' }
+    );
     res.status(201).json({
       userId: newUser.id,
       token,
@@ -62,7 +69,13 @@ exports.login = async (req, res, next) => {
       return res.status(401).json({ error: "Incorrect email or password" });
     }
 
-    const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+    await functions.resetUserLockAttempt(emailHash, user);
+
+    const token = jwt.sign(
+      { userId: user.id, admin: user.admin || false },
+      process.env.JWT_SECRET,
+      { expiresIn: '1h' }
+    );
     res.status(200).json({
       userId: user.id,
       token,
@@ -117,7 +130,7 @@ exports.updateUserProfile = async (req, res, next) => {
   }
 
   const { name, surname } = req.body;
-  const imageUrl = req.file ? `${req.protocol}://${req.get('host')}/images/${req.file.filename}` : null;
+  const imageUrl = resolveImageUrl(req);
 
   try {
     const user = await models.User.findOne({
@@ -129,15 +142,18 @@ exports.updateUserProfile = async (req, res, next) => {
       return res.status(404).json({ error: "User not found" });
     }
 
-    if (user.imageUrl && imageUrl) {
+    // Supprime l'ancienne image locale uniquement (les images Cloudinary/externes sont ignorees)
+    if (user.imageUrl && imageUrl && user.imageUrl.includes(`${req.get('host')}/images/`)) {
       const filename = user.imageUrl.split("/images/")[1];
-      fs.unlink(`images/${filename}`, (err) => {
-        if (err) {
-          console.log("Impossible to delete image: " + err);
-        } else {
-          console.log("Image deleted");
-        }
-      });
+      if (filename && filename !== DEFAULT_AVATAR) {
+        fs.unlink(`images/${filename}`, (err) => {
+          if (err) {
+            console.log("Impossible to delete image: " + err);
+          } else {
+            console.log("Image deleted");
+          }
+        });
+      }
     }
 
     if (user.id === userInfos.userId || userInfos.admin) {

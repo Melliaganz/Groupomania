@@ -1,5 +1,7 @@
 const models = require("../models");
 const functions = require("./functions");
+const social = require("./social");
+const { resolveImageUrl } = require("../middleware/multer-config");
 
 exports.createMessage = (req, res) => {
   try {
@@ -28,7 +30,7 @@ exports.createMessage = (req, res) => {
             content: content,
             likes: 0,
             userId: user.id,
-            imageUrl: req.file ? `${req.protocol}://${req.get('host')}/images/${req.file.filename}` : null,
+            imageUrl: resolveImageUrl(req),
           })
             .then((newMessage) => {
               return res.status(201).json({ message: "Message posted!" });
@@ -84,8 +86,10 @@ exports.getAllMessages = (req, res) => {
       },
     ],
   })
-    .then((data) => {
+    .then(async (data) => {
       const response = getPagingData(data, page, limit);
+      const userInfos = functions.getInfosUserFromToken(req);
+      await social.decorateMessages(response.messages, userInfos.userId);
       res.send(response);
     })
     .catch((error) => res.status(500).json({ error: "Unable to fetch messages", error }));
@@ -126,9 +130,9 @@ exports.getUserAllMessages = (req, res) => {
         attributes: ["name", "surname", "id","imageUrl"],
       },
     ],
-  }).then((data) => {
+  }).then(async (data) => {
     const response = getPagingData(data, page, limit);
-    console.log(response.messages.length);
+    await social.decorateMessages(response.messages, userInfos.userId);
     if (
       (response.messages.length > 0 &&
         response.messages[0].dataValues.userId === userInfos.userId) ||
@@ -159,18 +163,18 @@ exports.getOneMessage = (req, res) => {
       },
     ],
   })
-    .then((messages) => {
+    .then(async (messages) => {
+      if (!messages) {
+        return res.status(404).send({ error: "Message not found" });
+      }
+      await social.decorateMessages([messages], userInfos.userId);
       if (
-        (messages && messages.userId === userInfos.userId) ||
+        messages.userId === userInfos.userId ||
         userInfos.admin === true
       ) {
         messages.dataValues.canEdit = true;
-        res.status(200).json(messages);
-      } else if (messages) {
-        res.status(200).json(messages);
-      } else {
-        res.status(404).send({ error: "Message not found" });
       }
+      res.status(200).json(messages);
     })
     .catch((error) => {
       return res.status(404).json({ error: "Message not found" });

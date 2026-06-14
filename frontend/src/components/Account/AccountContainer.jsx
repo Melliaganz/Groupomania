@@ -1,0 +1,83 @@
+import React, { useState, useEffect, useCallback } from "react";
+import { useParams } from "react-router-dom";
+import Account from "./Account";
+import AccountEdit from "./AccountEdit";
+import AccountMessagesContainer from "./AccountMessagesContainer";
+import { getAccount } from "../../_utils/auth/auth.functions";
+import { NoUserFound } from "../Infos/NotFound";
+import { useI18n } from "../../_utils/i18n/I18nContext";
+
+const AccountContainer = ({ editor, onLogout }) => {
+  const { t } = useI18n();
+  const [error, setError] = useState(null);
+  const [isLoaded, setIsLoaded] = useState(false);
+  const [account, setAccount] = useState(null);
+  const { id } = useParams();
+  const [refetch, setRefetch] = useState(false);
+
+  const fetchAccount = useCallback(async () => {
+    try {
+      const res = await getAccount(id);
+      if (res.status === 200) {
+        const result = res.data;
+        setAccount(result);
+        setError(null);
+      } else if (res.status === 404) {
+        setError("User not found (404)");
+      } else {
+        setError(`Error: ${res.status} - ${res.statusText}`);
+      }
+    } catch (error) {
+      setError(`Error: ${error.message}`);
+    } finally {
+      setIsLoaded(true);
+    }
+  }, [id]);
+
+  useEffect(() => {
+    fetchAccount();
+  }, [fetchAccount, refetch, id]);
+
+  const handlePost = () => {
+    fetchAccount();
+  };
+
+  const handleDeletedAccount = () => {
+    setAccount(null);
+    setIsLoaded(false);
+    setRefetch((prev) => !prev);
+  };
+
+  if (!isLoaded) {
+    return <div className="text-center py-4 text-muted">{t("common.loading")}</div>;
+  }
+
+  if (error === "User not found (404)") {
+    return <NoUserFound />;
+  }
+
+  if (error) {
+    return <div className="text-center py-4">{t("common.error")}</div>;
+  }
+
+  return (
+    account && (
+      <React.Fragment>
+        <section>
+          {!editor ? (
+            <Account
+              {...account}
+              onLogout={onLogout}
+              onDeletedAccount={handleDeletedAccount}
+            />
+          ) : (
+            <AccountEdit {...account} onPost={handlePost} />
+          )}
+        </section>
+        {!editor && <AccountMessagesContainer />}
+      </React.Fragment>
+    )
+  );
+};
+
+export default AccountContainer;

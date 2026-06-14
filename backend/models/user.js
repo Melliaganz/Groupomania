@@ -18,7 +18,7 @@ module.exports = (sequelize, DataTypes) => {
       password: DataTypes.STRING,
       admin: DataTypes.BOOLEAN,
       emailHash: DataTypes.STRING,
-      lock_until: DataTypes.STRING,
+      lock_until: DataTypes.BIGINT,
       login_attempts: DataTypes.INTEGER,
     },
     {

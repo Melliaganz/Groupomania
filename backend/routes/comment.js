@@ -2,9 +2,12 @@ const express = require('express');
 const router = express.Router();
 const auth = require('../middleware/auth');
 const commentCtrl = require('../controllers/comment');
+const likeCtrl = require('../controllers/like');
 
 // Create a new comment for a specific message
 router.post('/:id/comment', auth, commentCtrl.createComment);
+
+router.post('/:messageId/comment/:commentId/like', auth, likeCtrl.toggleCommentLike);
 
 // Get all comments for a specific message
 router.get('/:id/comments', auth, commentCtrl.getMessageAllComments);

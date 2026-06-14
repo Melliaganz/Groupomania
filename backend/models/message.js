@@ -8,6 +8,8 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: "userId",
         onDelete: "CASCADE",
       });
+      Message.hasMany(models.Comment, { foreignKey: "messageId", onDelete: "CASCADE" });
+      Message.hasMany(models.Like, { foreignKey: "messageId", onDelete: "CASCADE" });
     }
   }
 

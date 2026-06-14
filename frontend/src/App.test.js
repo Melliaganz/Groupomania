@@ -1,8 +1,9 @@
-import { render, screen } from '@testing-library/react';
-import App from './App';
+import { describe, it, expect } from 'vitest';
+import api from './_utils/api/api';
 
-test('renders learn react link', () => {
-  render(<App />);
-  const linkElement = screen.getByText(/learn react/i);
-  expect(linkElement).toBeInTheDocument();
+// Test de fumee : verifie que l'instance axios est correctement configuree.
+describe('api', () => {
+  it('expose une instance axios avec une baseURL', () => {
+    expect(api.defaults.baseURL).toBeTruthy();
+  });
 });

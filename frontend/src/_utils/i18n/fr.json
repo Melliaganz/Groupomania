@@ -1,0 +1,85 @@
+{
+  "common": {
+    "appName": "Groupomania",
+    "loading": "Chargement...",
+    "error": "Une erreur s'est produite. Veuillez réessayer."
+  },
+  "nav": {
+    "feed": "Fil d'actualité",
+    "account": "Mon compte",
+    "editProfile": "Modifier le profil",
+    "logout": "Se déconnecter",
+    "login": "Se connecter",
+    "signup": "S'enregistrer",
+    "menu": "Menu",
+    "connection": "Connexion"
+  },
+  "login": {
+    "title": "Se connecter",
+    "email": "Adresse e-mail",
+    "emailPlaceholder": "Entrez votre e-mail",
+    "password": "Mot de passe",
+    "passwordPlaceholder": "Mot de passe",
+    "submit": "Se connecter",
+    "loading": "Connexion...",
+    "noAccount": "Pas encore de compte ?",
+    "signupLink": "S'enregistrer"
+  },
+  "register": {
+    "title": "Créer un compte",
+    "name": "Nom",
+    "namePlaceholder": "Nom ex : Dupont",
+    "surname": "Prénom",
+    "surnamePlaceholder": "Prénom ex : Damien",
+    "email": "Adresse e-mail",
+    "emailPlaceholder": "E-mail ex : sophie@groupomania.com",
+    "emailHelp": "L'e-mail peut être vu par les autres utilisateurs",
+    "password": "Mot de passe",
+    "passwordPlaceholder": "Mot de passe (au moins 1 chiffre)",
+    "submit": "S'enregistrer",
+    "loading": "Enregistrement...",
+    "hasAccount": "Déjà inscrit ?",
+    "loginLink": "Se connecter"
+  },
+  "post": {
+    "title": "Publier un article",
+    "titlePlaceholder": "Titre",
+    "contentPlaceholder": "Quoi de neuf ?",
+    "submit": "Publier"
+  },
+  "message": {
+    "like": "J'aime",
+    "comment": "Commenter",
+    "share": "Partager",
+    "delete": "Supprimer",
+    "confirmDelete": "Voulez-vous vraiment supprimer ce message ?",
+    "empty": "Aucun message pour le moment",
+    "linkCopied": "Lien copié dans le presse-papier !"
+  },
+  "comment": {
+    "placeholder": "Écrire un commentaire...",
+    "submit": "Commenter",
+    "like": "J'aime",
+    "delete": "Supprimer",
+    "confirmDelete": "Voulez-vous vraiment supprimer ce commentaire ?",
+    "empty": "Aucun commentaire"
+  },
+  "account": {
+    "info": "Informations",
+    "name": "Nom",
+    "surname": "Prénom",
+    "email": "E-mail",
+    "memberSince": "Membre depuis le {date}",
+    "edit": "Modifier",
+    "delete": "Supprimer",
+    "editTitle": "Modifier le profil",
+    "confirmDelete": "Voulez-vous vraiment supprimer ce compte ?",
+    "changePhoto": "Changer la photo de profil",
+    "save": "Enregistrer"
+  },
+  "notFound": {
+    "noMessages": "Aucun message",
+    "noUser": "L'utilisateur n'existe pas.",
+    "noComments": "Aucun commentaire"
+  }
+}

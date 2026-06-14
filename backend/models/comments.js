@@ -23,6 +23,8 @@ module.exports = (sequelize, DataTypes) => {
         onDelete: "CASCADE",
         hooks: true,
       });
+
+      models.Comment.hasMany(models.Like, { foreignKey: "commentId", onDelete: "CASCADE" });
     }
   }
 

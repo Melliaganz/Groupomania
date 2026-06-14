@@ -1,33 +1,34 @@
 const express = require("express");
 const cors = require("cors");
-const bodyParser = require("body-parser");
 const helmet = require("helmet");
-const xss = require("xss-clean");
 const path = require('path');
 const userRoutes = require("./routes/user");
 const messageRoutes = require("./routes/message");
 const commentRoutes = require('./routes/comment');
-require('dotenv').config();
+require('dotenv').config({ quiet: true });
 
 const app = express();
 
 // Set security headers
 app.use(helmet());
 
-// Enable CORS with specific origin and credentials
+// Enable CORS. Whitelist du front via la variable d'env CORS_ORIGIN
+// (plusieurs origines separees par des virgules). Defaut : tout autoriser.
+const allowedOrigins = (process.env.CORS_ORIGIN || '*')
+  .split(',')
+  .map((o) => o.trim());
+
 const corsOptions = {
-  origin: '*', // Your frontend URL
-  credentials: true, // Allow credentials to be sent
-  allowedHeaders: ['Origin', 'X-Requested-With', 'Content', 'Accept', 'Content-Type', 'Authorization'],
+  origin: allowedOrigins.includes('*') ? '*' : allowedOrigins,
+  allowedHeaders: ['Origin', 'X-Requested-With', 'Accept', 'Content-Type', 'Authorization'],
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
 };
 
-app.use(cors(corsOptions));
-app.options('*', cors(corsOptions)); // Handle preflight requests
+app.use(cors(corsOptions)); // gere aussi les requetes preflight OPTIONS
 
-// Body parser to handle JSON and URL-encoded data
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(bodyParser.json());
+// Body parsers (integres a Express) avec limite de taille pour limiter les abus
+app.use(express.urlencoded({ extended: true, limit: '10kb' }));
+app.use(express.json({ limit: '10kb' }));
 
 // Serve static files from the "images" directory with appropriate headers
 app.use('/images', express.static(path.join(__dirname, 'images'), {
@@ -36,12 +37,6 @@ app.use('/images', express.static(path.join(__dirname, 'images'), {
     res.setHeader('Cross-Origin-Opener-Policy', 'same-origin'); // Mitigate side-channel attacks
   }
 }));
-
-// Protection against XSS attacks
-app.use(xss());
-
-// Prevent DOS attacks by limiting request body size
-app.use(express.json({ limit: '10kb' }));
 
 // Routes
 app.use("/api/auth", userRoutes);

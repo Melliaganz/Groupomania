@@ -7,12 +7,12 @@ const userCtrl = require("../controllers/user");
 
 const apiLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100,
+  limit: 100,
 });
 
 const createAccountLimiter = rateLimit({
   windowMs: 60 * 60 * 1000, // 1 hour window
-  max: 50, // start blocking after 50 requests
+  limit: 50, // start blocking after 50 requests
   message: "Too many accounts created from this IP, please try again after an hour",
 });
 

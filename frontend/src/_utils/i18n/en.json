@@ -1,0 +1,85 @@
+{
+  "common": {
+    "appName": "Groupomania",
+    "loading": "Loading...",
+    "error": "Something went wrong. Please try again."
+  },
+  "nav": {
+    "feed": "Feed",
+    "account": "My account",
+    "editProfile": "Edit profile",
+    "logout": "Log out",
+    "login": "Log in",
+    "signup": "Sign up",
+    "menu": "Menu",
+    "connection": "Connection"
+  },
+  "login": {
+    "title": "Log in",
+    "email": "Email address",
+    "emailPlaceholder": "Enter your email",
+    "password": "Password",
+    "passwordPlaceholder": "Password",
+    "submit": "Log in",
+    "loading": "Logging in...",
+    "noAccount": "No account yet?",
+    "signupLink": "Sign up"
+  },
+  "register": {
+    "title": "Create an account",
+    "name": "Last name",
+    "namePlaceholder": "Last name e.g. Dupont",
+    "surname": "First name",
+    "surnamePlaceholder": "First name e.g. Damien",
+    "email": "Email address",
+    "emailPlaceholder": "Email e.g. sophie@groupomania.com",
+    "emailHelp": "Your email can be seen by other users",
+    "password": "Password",
+    "passwordPlaceholder": "Password (at least 1 digit)",
+    "submit": "Sign up",
+    "loading": "Signing up...",
+    "hasAccount": "Already registered?",
+    "loginLink": "Log in"
+  },
+  "post": {
+    "title": "Publish a post",
+    "titlePlaceholder": "Title",
+    "contentPlaceholder": "What's new?",
+    "submit": "Publish"
+  },
+  "message": {
+    "like": "Like",
+    "comment": "Comment",
+    "share": "Share",
+    "delete": "Delete",
+    "confirmDelete": "Do you really want to delete this post?",
+    "empty": "No posts yet",
+    "linkCopied": "Link copied to clipboard!"
+  },
+  "comment": {
+    "placeholder": "Write a comment...",
+    "submit": "Comment",
+    "like": "Like",
+    "delete": "Delete",
+    "confirmDelete": "Do you really want to delete this comment?",
+    "empty": "No comments"
+  },
+  "account": {
+    "info": "Information",
+    "name": "Last name",
+    "surname": "First name",
+    "email": "Email",
+    "memberSince": "Member since {date}",
+    "edit": "Edit",
+    "delete": "Delete",
+    "editTitle": "Edit profile",
+    "confirmDelete": "Do you really want to delete this account?",
+    "changePhoto": "Change profile picture",
+    "save": "Save"
+  },
+  "notFound": {
+    "noMessages": "No posts",
+    "noUser": "This user does not exist.",
+    "noComments": "No comments"
+  }
+}
